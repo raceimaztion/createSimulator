@@ -1,0 +1,14 @@
+Each project starts with a root folder, which contains all the files and folders for building the project.
+
+The root of a project is at points like this:
+$DOCUMENTS/CreateSimulator/Projects/[ProjectName]/
+
+The subfolders of the main project folder are as follows:
+- src:
+	- Contains all the source code for the project.
+- lib:
+	- Optional folder that may contain additional library files.
+- ebin:
+	- Contains compiled files for the Command Module.
+- lbin:
+	- Contains compiled files for running on the local computer.
