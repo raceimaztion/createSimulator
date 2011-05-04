@@ -299,9 +299,148 @@ uint8_t cm_read_front_right_cliff();
 uint8_t cm_read_right_cliff();
 
 /**
+ * Returns 1 if the robot currently sees a virtual wall.
+ */
+uint8_t cm_read_virtual_wall();
+
+/*
+TODO: Implement something to deal with the "Low Side Driver and Wheel Overcurrents"
+	sensor request. code #14.
+*/
+
+/**
  * Reads the byte last received from the IR sensor.
- * @return The last message read by the IR sensor.
+ * See the REMOTE_* codes in the cm.h header.
  */
 uint8_t cm_read_ir();
 
-// TODO: Set up the sensor query functions.
+/*
+TODO: Implement the "Buttons" sensor request. code #18.
+*/
+
+/**
+ * Reads the distance the robot has moved since the last time it was asked.
+ * Note: Units are in millimeters.
+ */
+int16_t cm_read_distance();
+
+/**
+ * Reads the angle the robot has turned since the last time it was asked.
+ * Note: Units are in degrees, with positive values to the right and negative
+ *   values to the left.
+ */
+int16_t cm_read_angle();
+
+/**
+ * Reads the battery's current charging state.
+ * See the BATTERY_* codes in the cm.h header.
+ */
+uint8_t cm_read_charging_state();
+
+/**
+ * Reads the battery's current voltage in millivolts.
+ */
+uint16_t cm_read_battery_voltage();
+
+/**
+ * Reads the amount of current running into (positive values) or out of (negative values)
+ *   the robot's battery.
+ */
+int16_t cm_read_battery_current();
+
+/**
+ * Reads the battery's current temperature in degrees Celsius.
+ */
+int8_t cm_read_battery_temperature();
+
+/**
+ * Reads the battery's current charge in milliamp-hours.
+ * Note: This value is not accurate if the robot is running off Alkaline batteries.
+ */
+uint16_t cm_read_battery_charge();
+
+/**
+ * Reads the battery's estimated charge capacity in milliamp-hours.
+ * Note: This value is not accurate if the robot is running off Alkaline batteries.
+ */
+uint16_t cm_read_battery_capacity();
+
+/**
+ * Reads the strength of the wall sensor's signal.
+ * The range is 0 to 4095.
+ */
+uint16_t cm_read_wall_signal();
+
+/**
+ * Reads the strength of the far left cliff sensor's signal.
+ * The range is 0 to 4095.
+ */
+uint16_t cm_read_left_cliff_signal();
+
+/**
+ * Reads the strength of the front left cliff sensor's signal.
+ * The range is 0 to 4095.
+ */
+uint16_t cm_read_front_left_cliff_signal();
+
+/**
+ * Reads the strength of the front right cliff sensor's signal.
+ * The range is 0 to 4095.
+ */
+uint16_t cm_read_front_right_cliff_signal();
+
+/**
+ * Reads the strength of the far right cliff sensor's signal.
+ * The range is 0 to 4095.
+ */
+uint16_t cm_read_right_cliff_signal();
+
+/*
+TODO: Implement the "Cargo Bay Digital Inputs" sensor request. code #32, formatted byte.
+
+TODO: Implement the "Cargo Bay Analog Signal" sensor request. code #33, unsigned 10-bit int.
+
+TODO: Implement the "Charging Sources Available" sensor request. code #34, formatted byte.
+*/
+
+/**
+ * Reads the current Open Interface mode.
+ * See the OI_MODE_* codes in the cm.h header.
+ */
+uint8_t cm_read_oi_mode();
+
+/**
+ * Reads the number of the currently-playing song.
+ * Range is 0-15.
+ */
+uint8_t cm_read_current_song_number();
+
+/**
+ * Returns 1 if there is a song currently playing.
+ */
+uint8_t cm_read_is_song_playing();
+
+/**
+ * Returns the last-requested speed.
+ * Range is -500 to 500, units are in millimeters per second.
+ */
+uint16_t cm_read_requested_speed();
+
+/**
+ * Returns the last-requested radius.
+ * Range is -32768 to 32767, units are in millimeters.
+ */
+uint16_t cm_read_requested_radius();
+
+/**
+ * Returns the last-requested speed for the right wheel.
+ * Range is -500 to 500, in millimeters per second.
+ */
+uint16_t cm_read_requested_right_speed();
+
+/**
+ * Returns the last-requested speed for the left wheel.
+ * Range is -500 to 500, in millimeters per second.
+ */
+uint16_t cm_read_requested_left_speed();
+
