@@ -175,72 +175,133 @@ void cm_start(void);
 void cm_full_mode(void);
 
 /**
- * 
+ * Conditionally grants full control of the robot to your program.
+ * If the robot enters a danger condition, the robot returns to passive mode.
  */
 void cm_safe_mode(void);
 
 /**
- * 
+ * Returns the robot to passive mode, where your program can query sensors,
+ *   but not drive the robot.
+ * Note: This is the default mode.
  */
 void cm_passive_mode(void);
 
 /**
- * 
+ * Tells the robot to play the specified demo.
+ *   See the DEMO_* constants for more information.
  */
 void cm_play_demo(uint8_t demo);
 
 /**
- * 
+ * Set the rate of data transfer between the robot and the Command Module.
+ * Not important for the most part.
+ *   See the Baud* codes in oi.h for more information.
  */
 void cm_baud_rate(uint8_t baud);
 
 /**
- * 
+ * Tells the robot to run the "Cover" demo.
+ * Note: If the robot is a Roomba, it will clean the floor.
  */
 void cm_demo_cover(void);
 
 /**
- * 
+ * Tells the robot to run the "cover" demo and dock with its charging station
+ *   when its battery gets low.
+ * Note: If the robot is a Roomba, it will clean the floor.
  */
 void cm_demo_cover_and_dock(void);
 
 /**
- * 
+ * Tells the robot to run the "spot clean" demo.
+ * Note: If the robot is a Roomba, it will clean the floor.
  */
 void cm_demo_spot(void);
 
 /**
- * 
+ * Tells the robot to start driving at the specified speed, with the specified
+ * 	driving radius to the left.  Note that MAX_INT16 and MIN_INT16 have it
+ *	drive as straight as possible, but it's still not entirely straight.
  */
 void cm_drive(int16_t speed, int16_t radius);
 
 /**
- * 
+ * Tells the robot to start driving by specifying the driving speed of each wheel.
  */
 void cm_direct_drive(int16_t right_speed, int16_t left_speed);
 
 /**
- * 
+ * Convenience function to tell the robot to stop driving.
+ */
+void cm_stop_driving();
+
+/**
+ * Controls the LEDs on top of the robot.
+ *   @param play Turns the Play light on if non-zero.
+ *   @param advance Turns the Advance light on if non-zero.
+ *   @param power_color Sets the shade of the Power light between green (at 0) and orange (at 255).
+ *   @param power_intensity Sets the brightness of the Power light from off (at 0) to full brightness (at 255).
  */
 void cm_set_leds(uint8_t play, uint8_t advance, uint8_t power_color, uint8_t power_intensity);
 
 /**
- * 
+ * Sets the digital outputs on the Create's cargo bay connector.
+ *   @param pin*: Turns the pin on if non-zero.
+ * Note 1: Not used in simulations.
+ * Note 2: Only available on Create robots. Does nothing on Roomba or Scooba robots.
  */
 void cm_digital_outputs(uint8_t pin0, uint8_t pin1, uint8_t pin2);
 
 /**
- * 
+ * Sends the provided byte out over IR.
  */
 void cm_send_ir(uint8_t data);
 
 /**
- * 
+ * Stores a song under the given number for later playback.
  */
 void cm_store_song(uint8_t song_number, uint8_t song_length, const uint8_t song_notes[], const uint8_t song_lengths[]);
 
 /**
- * 
+ * Plays the song stored under the given number.
  */
 void cm_play_song(uint8_t song_number);
 
+/* ************************* *
+ * Sensor-reading functions: *
+ * ************************* */
+
+/**
+ * Returns 1 if the robot currently sees a wall on its right side.
+ * Note: There is only one wall sensor on all iRobot robots.
+ */
+uint8_t cm_read_wall();
+
+/**
+ * Returns 1 if the robot sees a cliff on its far left cliff sensor.
+ */
+uint8_t cm_read_left_cliff();
+
+/**
+ * Returns 1 if the robot sees a cliff on its front left cliff sensor.
+ */
+uint8_t cm_read_front_left_cliff();
+
+/**
+ * Returns 1 if the robot sees a cliff on its front right cliff sensor.
+ */
+uint8_t cm_read_front_right_cliff();
+
+/**
+ * Returns 1 if the robot sees a cliff on its far right cliff sensor.
+ */
+uint8_t cm_read_right_cliff();
+
+/**
+ * Reads the byte last received from the IR sensor.
+ * @return The last message read by the IR sensor.
+ */
+uint8_t cm_read_ir();
+
+// TODO: Set up the sensor query functions.
