@@ -44,6 +44,9 @@ public class EditorWindow implements ActionListener
 	
 	protected JScrollPane chooserScroller;
 	
+	protected JList chooserList;
+	protected ProjectChooserModel chooserModel;
+	
 	/**
 	 * Contains all the widgets necessary for the development and testing of projects. 
 	 */
@@ -154,9 +157,14 @@ public class EditorWindow implements ActionListener
 		window.setJMenuBar(menubar);
 		
 		// The Chooser card:
-		chooserPanel = new JPanel(new BorderLayout());
+		chooserPanel = new JPanel(new BorderLayout(3, 3));
 		
-		updateProjectList();
+		chooserModel = new ProjectChooserModel();
+		chooserList = new JList(chooserModel);
+		chooserList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		chooserPanel.add(new JLabel("Choose a project to load:"), BorderLayout.NORTH);
+		chooserPanel.add(chooserList, BorderLayout.CENTER);
 		
 		mainContainer.add(chooserPanel, CHOOSER_PANEL);
 		
@@ -204,7 +212,6 @@ public class EditorWindow implements ActionListener
 	 */
 	protected void updateProjectList()
 	{
-		
 	}
 	
 	/**

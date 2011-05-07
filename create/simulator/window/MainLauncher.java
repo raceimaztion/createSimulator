@@ -85,16 +85,9 @@ public class MainLauncher
 		if (!SKETCHBOOK_FOLDER.exists())
 			SKETCHBOOK_FOLDER.mkdirs();
 		
-		// TODO: Replace this with the launcher for the EditorWindow:
-		System.out.printf("Sketchbook folder is: %s\n", SKETCHBOOK_FOLDER.toString());
-		
-		System.out.println("All current projects:");
-		String projects[] = getSketchNames();
-		if (projects != null)
-			for (String project: projects)
-				System.out.println(project);
-		else
-			System.out.println("No projects!");
+		// Launch the EditorWindow:
+		EditorWindow window = new EditorWindow();
+		window.show();
 	}
 	
 	/**

@@ -19,7 +19,7 @@ public class CreateProject
 	/**
 	 * These represent all the modules that make up this CreateProject.
 	 */
-	protected Vector<String> modules;
+	protected Vector<String> moduleNames;
 	
 	protected CreateProject(File projectFolder)
 	{
@@ -34,6 +34,7 @@ public class CreateProject
 		embeddedBinFolder.mkdirs();
 		
 		// Load information about each module
+		moduleNames = new Vector<String>();
 	}
 	
 	/**
@@ -41,7 +42,7 @@ public class CreateProject
 	 */
 	public void buildSimulatorProject()
 	{
-		
+		// TODO: Build the project for local simulation
 	}
 	
 	/**
@@ -49,7 +50,7 @@ public class CreateProject
 	 */
 	public void buildEmbeddedProject()
 	{
-		
+		// TODO: Build the project for embedded operation.
 	}
 	
 	/**
