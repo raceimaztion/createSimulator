@@ -19,20 +19,23 @@ public class SourceFileFilter extends FileFilter implements FilenameFilter
 	
 	public boolean accept(File f)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if (!f.isFile())
+			return false;
+		String name = f.getName();
+		int index = name.lastIndexOf('.');
+		if (index < 0)
+			return false;
+		return name.substring(index).equalsIgnoreCase(".cc");
 	}
 	
 	public String getDescription()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "Source files";
 	}
 	
 	public boolean accept(File dir, String name)
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return accept(new File(dir, name));
 	}
 	
 }

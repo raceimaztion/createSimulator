@@ -85,6 +85,9 @@ public class MainLauncher
 		if (!SKETCHBOOK_FOLDER.exists())
 			SKETCHBOOK_FOLDER.mkdirs();
 		
+		// Debugging:
+		System.out.printf("Sketchbook folder: %s\n", SKETCHBOOK_FOLDER);
+		
 		// Launch the EditorWindow:
 		EditorWindow window = new EditorWindow();
 		window.show();
@@ -105,6 +108,11 @@ public class MainLauncher
 	 */
 	public static String[] getSketchNames()
 	{
-		return SKETCHBOOK_FOLDER.list(ProjectFileFilter.getFilter());
+		FilenameFilter filter = ProjectFileFilter.getFilter();
+		
+//		assert(filter != null);
+//		assert(SKETCHBOOK_FOLDER != null);
+		
+		return SKETCHBOOK_FOLDER.list(filter);
 	}
 }

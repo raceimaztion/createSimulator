@@ -3,6 +3,12 @@ package create.simulator.window;
 import java.io.*;
 import java.util.*;
 
+import create.simulator.utils.*;
+
+import org.fife.ui.rsyntaxtextarea.*;
+import org.fife.ui.rsyntaxtextarea.FileLocation;
+
+
 /**
  * Contains all the information about a project required to build it, as well as starting a simulator/etc.
  * @author dvanhumb
@@ -35,6 +41,8 @@ public class CreateProject
 		
 		// Load information about each module
 		moduleNames = new Vector<String>();
+		for (String module : sourceFolder.list(SourceFileFilter.getSingleton()))
+			moduleNames.add(module);
 	}
 	
 	/**
@@ -97,5 +105,40 @@ public class CreateProject
 			// Return the new project
 			return new CreateProject(projectFolder);
 		}
-	} // end newProject(String name) 
+	} // end newProject(String name)
+	
+	/**
+	 * Returns a list of all the modules included in this project.
+	 * @return
+	 */
+	public String[] getModuleNames()
+	{
+		return sourceFolder.list(SourceFileFilter.getSingleton());
+	}
+	
+	/**
+	 * Loads a module as a TextEditorPane.
+	 * @param moduleName
+	 * @return
+	 */
+	public TextEditorPane loadModule(String moduleName)
+	{
+		if (moduleNames.contains(moduleName))
+		{
+			try
+			{
+				TextEditorPane editor = new TextEditorPane(TextEditorPane.INSERT_MODE, false, FileLocation.create(new File(sourceFolder, moduleName)));
+				editor.setHighlightCurrentLine(true);
+				editor.setBracketMatchingEnabled(true);
+				editor.setTextAntiAliasHint("VALUE_TEXT_ANTIALIAS_ON");
+				editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);
+				return editor;
+			}
+			catch (IOException er)
+			{
+				return null;
+			}
+		}
+		return null;
+	}
 }

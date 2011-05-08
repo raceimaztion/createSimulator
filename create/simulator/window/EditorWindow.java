@@ -1,11 +1,13 @@
 package create.simulator.window;
 
+import create.simulator.icons.*;
 import create.simulator.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.*;
 import javax.swing.*;
+import javax.swing.border.*;
 
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.*;
@@ -25,6 +27,9 @@ public class EditorWindow implements ActionListener
 	public static final String COMMAND_RUN_SERIAL= "run-serial";
 	public static final String COMMAND_RUN_EMBEDDED = "run-embedded";
 	public static final String COMMAND_HELP_ABOUT = "help-about";
+	public static final String COMMAND_CHOOSE_PROJECT = "choose-project";
+	
+	public static final Icon ICON_SOURCE = IconLoader.getIcon("source.png");
 	
 	/**
 	 * The CreateProject associated with this EditorWindow.
@@ -47,6 +52,8 @@ public class EditorWindow implements ActionListener
 	protected JList chooserList;
 	protected ProjectChooserModel chooserModel;
 	
+	protected JButton chooserLoad;
+	
 	/**
 	 * Contains all the widgets necessary for the development and testing of projects. 
 	 */
@@ -54,10 +61,11 @@ public class EditorWindow implements ActionListener
 	protected static final String EDITING_PANEL = "EDITING";
 	
 	protected JLabel statusBar;
-	protected RSyntaxTextArea editorPane;
-	protected RTextScrollPane scrollPane;
+	protected JTabbedPane editorTabs;
+	protected JToolBar editorToolbar;
 	
-	protected JToolBar toolbar;
+	protected Vector<TextEditorPane> editorPanes = new Vector<TextEditorPane>();
+	protected Vector<RTextScrollPane> editorScrollers = new Vector<RTextScrollPane>();
 	
 	protected EventAction actionProjectNew;
 	protected EventAction actionProjectLoad;
@@ -122,24 +130,21 @@ public class EditorWindow implements ActionListener
 		// The Editing card:
 		editingPanel = new JPanel(new BorderLayout());
 		
-		toolbar = new JToolBar();
-		toolbar.add(EventAction.createActionToolbarButton(actionProjectNew));
-		toolbar.addSeparator();
-		toolbar.add(EventAction.createActionToolbarButton(actionEditCut));
-		toolbar.add(EventAction.createActionToolbarButton(actionEditCopy));
-		toolbar.add(EventAction.createActionToolbarButton(actionEditPaste));
-		toolbar.addSeparator();
-		toolbar.add(EventAction.createActionToolbarButton(actionEditFind));
-		editingPanel.add(toolbar, BorderLayout.NORTH);
+		editorToolbar = new JToolBar();
+		editorToolbar.add(EventAction.createActionToolbarButton(actionProjectNew));
+		editorToolbar.addSeparator();
+		editorToolbar.add(EventAction.createActionToolbarButton(actionEditCut));
+		editorToolbar.add(EventAction.createActionToolbarButton(actionEditCopy));
+		editorToolbar.add(EventAction.createActionToolbarButton(actionEditPaste));
+		editorToolbar.addSeparator();
+		editorToolbar.add(EventAction.createActionToolbarButton(actionEditFind));
+		editingPanel.add(editorToolbar, BorderLayout.NORTH);
 		
-		editorPane = new RSyntaxTextArea();
-		editorPane.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_CPLUSPLUS);
-		editorPane.setBracketMatchingEnabled(true);
-		editorPane.setTextAntiAliasHint("VALUE_TEXT_ANTIALIAS_ON");
-		scrollPane = new RTextScrollPane(editorPane);
-		editingPanel.add(scrollPane, BorderLayout.CENTER);
+		editorTabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+		editingPanel.add(editorTabs, BorderLayout.CENTER);
 		
 		statusBar = new JLabel("Ready");
+		statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
 		editingPanel.add(statusBar, BorderLayout.SOUTH);
 		
 		JMenuBar menubar = new JMenuBar();
@@ -152,6 +157,13 @@ public class EditorWindow implements ActionListener
 		menuProject.addSeparator();
 		menuProject.add(EventAction.createActionMenuItem(actionProjectExit));
 		menubar.add(menuProject);
+		JMenu menuEdit = new JMenu("Edit");
+		menuEdit.add(EventAction.createActionMenuItem(actionEditCut));
+		menuEdit.add(EventAction.createActionMenuItem(actionEditCopy));
+		menuEdit.add(EventAction.createActionMenuItem(actionEditPaste));
+		menuEdit.addSeparator();
+		menuEdit.add(EventAction.createActionMenuItem(actionEditFind));
+		menubar.add(menuEdit);
 		
 		mainContainer.add(editingPanel, EDITING_PANEL);
 		window.setJMenuBar(menubar);
@@ -163,8 +175,13 @@ public class EditorWindow implements ActionListener
 		chooserList = new JList(chooserModel);
 		chooserList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
+		chooserLoad = new JButton("Load project");
+		chooserLoad.addActionListener(this);
+		chooserLoad.setActionCommand(COMMAND_CHOOSE_PROJECT);
+		
 		chooserPanel.add(new JLabel("Choose a project to load:"), BorderLayout.NORTH);
 		chooserPanel.add(chooserList, BorderLayout.CENTER);
+		chooserPanel.add(chooserLoad, BorderLayout.SOUTH);
 		
 		mainContainer.add(chooserPanel, CHOOSER_PANEL);
 		
@@ -190,7 +207,23 @@ public class EditorWindow implements ActionListener
 		
 		windowLayout.show(mainContainer, EDITING_PANEL);
 		
-		// TODO: Fill in how to load in all the project-specific stuff into the window.
+		String[] moduleNames = project.getModuleNames();
+		for (String name : moduleNames)
+		{
+			// Load a tab for this module
+			TextEditorPane editor = project.loadModule(name);
+			if (editor == null)
+				continue;
+			
+			RTextScrollPane scroller = new RTextScrollPane(editor, true);
+			
+			editorPanes.add(editor);
+			editorScrollers.add(scroller);
+			editorTabs.addTab(name, ICON_SOURCE, scroller);
+		}
+		
+		if (editorPanes.size() > 0)
+			editorTabs.setSelectedIndex(0);
 	}
 	
 	/**
@@ -298,6 +331,15 @@ public class EditorWindow implements ActionListener
 		else if (command.equals(COMMAND_HELP_ABOUT))
 		{
 			// Help -> About
+		}
+		else if (command.equals(COMMAND_CHOOSE_PROJECT))
+		{
+			// Choose -> Load project
+			String projectName = chooserModel.getSelectedProject();
+			
+			CreateProject newProject = CreateProject.loadProject(projectName);
+			if (newProject != null)
+				setProject(newProject);
 		}
 	}
 	

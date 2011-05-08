@@ -55,4 +55,9 @@ public class ProjectChooserModel extends DefaultComboBoxModel
 		else
 			setSelectedItem(null);
 	} // end updateProjectList()
+	
+	public String getSelectedProject()
+	{
+		return projectList[getIndexOf(getSelectedItem())];
+	}
 }
