@@ -108,6 +108,7 @@ public class EditorWindow implements ActionListener
 	{
 		window = new JFrame("Create Simulator: Editor");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setMinimumSize(new Dimension(200, 350));
 		
 		windowLayout = new CardLayout();
 		mainContainer = window.getContentPane();
@@ -157,6 +158,7 @@ public class EditorWindow implements ActionListener
 		menuProject.addSeparator();
 		menuProject.add(EventAction.createActionMenuItem(actionProjectExit));
 		menubar.add(menuProject);
+		
 		JMenu menuEdit = new JMenu("Edit");
 		menuEdit.add(EventAction.createActionMenuItem(actionEditCut));
 		menuEdit.add(EventAction.createActionMenuItem(actionEditCopy));
@@ -164,6 +166,12 @@ public class EditorWindow implements ActionListener
 		menuEdit.addSeparator();
 		menuEdit.add(EventAction.createActionMenuItem(actionEditFind));
 		menubar.add(menuEdit);
+		
+		JMenu menuRun = new JMenu("Run");
+		menuRun.add(EventAction.createActionMenuItem(actionRunEmbedded));
+		menuRun.add(EventAction.createActionMenuItem(actionRunSerial));
+		menuRun.add(EventAction.createActionMenuItem(actionRunSimulator));
+		menubar.add(menuRun);
 		
 		mainContainer.add(editingPanel, EDITING_PANEL);
 		window.setJMenuBar(menubar);

@@ -110,8 +110,14 @@ public class MainLauncher
 	{
 		FilenameFilter filter = ProjectFileFilter.getFilter();
 		
-//		assert(filter != null);
-//		assert(SKETCHBOOK_FOLDER != null);
+		if (filter == null || SKETCHBOOK_FOLDER == null)
+		{
+			System.err.println("MainLauncher.getSketchNames(): Fatal error, a null pointer.");
+			System.exit(0);
+		}
+		
+		assert(filter != null);
+		assert(SKETCHBOOK_FOLDER != null);
 		
 		return SKETCHBOOK_FOLDER.list(filter);
 	}
