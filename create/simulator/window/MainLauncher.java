@@ -11,6 +11,11 @@ public class MainLauncher
 	
 	public static void main(String[] args)
 	{
+		if (args.length == 0)
+		{
+			System.err.println("Warning: No command-line arguments given, large chance of not finding the Sketchbook Folder!");
+		}
+		
 		// Check what our runtime platform is:
 		String osName = System.getProperty("os.name").toLowerCase();
 		if (osName.contains("windows"))

@@ -108,7 +108,7 @@ public class EditorWindow implements ActionListener
 	{
 		window = new JFrame("Create Simulator: Editor");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setMinimumSize(new Dimension(200, 350));
+		window.setMinimumSize(new Dimension(300, 450));
 		
 		windowLayout = new CardLayout();
 		mainContainer = window.getContentPane();
@@ -197,6 +197,7 @@ public class EditorWindow implements ActionListener
 		windowLayout.show(mainContainer, CHOOSER_PANEL);
 		
 		window.pack();
+		window.setLocationRelativeTo(null);
 	} // end setup()
 	
 	/**
@@ -349,16 +350,5 @@ public class EditorWindow implements ActionListener
 			if (newProject != null)
 				setProject(newProject);
 		}
-	}
-	
-	/**
-	 * Handles launching the IDE, including "first launch" and configuration-finding tasks.
-	 * Note that this is only a temporary launch point, and all final launchs must be made through the MainLauncher class.
-	 * @param args
-	 */
-	public static void main(String[] args)
-	{
-		EditorWindow window = new EditorWindow();
-		window.show();
-	}
+	} // end actionPerformed()
 }
