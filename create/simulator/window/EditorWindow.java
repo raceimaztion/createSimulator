@@ -12,7 +12,7 @@ import javax.swing.border.*;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.*;
 
-public class EditorWindow implements ActionListener
+public class EditorWindow implements ActionListener, WindowListener
 {
 	public static final String COMMAND_NEW_PROJECT = "new-project";
 	public static final String COMMAND_LOAD_PROJECT = "load-project";
@@ -57,12 +57,13 @@ public class EditorWindow implements ActionListener
 	/**
 	 * Contains all the widgets necessary for the development and testing of projects. 
 	 */
-	protected JPanel editingPanel;
+	protected Box editingPanel;
 	protected static final String EDITING_PANEL = "EDITING";
 	
-	protected JLabel statusBar;
-	protected JTabbedPane editorTabs;
 	protected JToolBar editorToolbar;
+	protected JLabel editorProjectName;
+	protected JTabbedPane editorTabs;
+	protected JLabel statusBar;
 	
 	protected Vector<TextEditorPane> editorPanes = new Vector<TextEditorPane>();
 	protected Vector<RTextScrollPane> editorScrollers = new Vector<RTextScrollPane>();
@@ -104,11 +105,15 @@ public class EditorWindow implements ActionListener
 		setProject(project);
 	}
 	
+	/**
+	 * Used by all constructors to set up the window.
+	 */
 	private void setup()
 	{
 		window = new JFrame("Create Simulator: Editor");
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setMinimumSize(new Dimension(300, 450));
+		window.addWindowListener(this);
 		
 		windowLayout = new CardLayout();
 		mainContainer = window.getContentPane();
@@ -129,9 +134,10 @@ public class EditorWindow implements ActionListener
 		actionRunEmbedded = EventAction.createEventAction("Run on Command Module...", COMMAND_RUN_EMBEDDED, this);
 		
 		// The Editing card:
-		editingPanel = new JPanel(new BorderLayout());
+		editingPanel = Box.createVerticalBox();
 		
 		editorToolbar = new JToolBar();
+		editorToolbar.setFloatable(false);
 		editorToolbar.add(EventAction.createActionToolbarButton(actionProjectNew));
 		editorToolbar.addSeparator();
 		editorToolbar.add(EventAction.createActionToolbarButton(actionEditCut));
@@ -139,14 +145,18 @@ public class EditorWindow implements ActionListener
 		editorToolbar.add(EventAction.createActionToolbarButton(actionEditPaste));
 		editorToolbar.addSeparator();
 		editorToolbar.add(EventAction.createActionToolbarButton(actionEditFind));
-		editingPanel.add(editorToolbar, BorderLayout.NORTH);
+		editingPanel.add(editorToolbar);
+		
+		editorProjectName = new JLabel("bumper");
+		editorProjectName.setVisible(false);
+		editingPanel.add(editorProjectName);
 		
 		editorTabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		editingPanel.add(editorTabs, BorderLayout.CENTER);
+		editingPanel.add(editorTabs);
 		
 		statusBar = new JLabel("Ready");
 		statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		editingPanel.add(statusBar, BorderLayout.SOUTH);
+		editingPanel.add(statusBar);
 		
 		JMenuBar menubar = new JMenuBar();
 		
@@ -213,6 +223,8 @@ public class EditorWindow implements ActionListener
 		}
 		
 		this.project = project;
+		editorProjectName.setText(project.getProjectName());
+		editorProjectName.setVisible(true);
 		
 		windowLayout.show(mainContainer, EDITING_PANEL);
 		
@@ -244,6 +256,8 @@ public class EditorWindow implements ActionListener
 			return;
 		
 		project = null;
+		editorProjectName.setText("");
+		editorProjectName.setVisible(false);
 		
 		updateProjectList();
 		windowLayout.show(mainContainer, CHOOSER_PANEL);
@@ -351,4 +365,46 @@ public class EditorWindow implements ActionListener
 				setProject(newProject);
 		}
 	} // end actionPerformed()
+
+	public void windowActivated(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowClosed(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowClosing(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowDeactivated(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowDeiconified(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowIconified(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowOpened(WindowEvent e)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

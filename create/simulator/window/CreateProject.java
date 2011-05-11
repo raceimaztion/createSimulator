@@ -16,6 +16,7 @@ import org.fife.ui.rsyntaxtextarea.FileLocation;
  */
 public class CreateProject
 {
+	protected String projectName;
 	protected File projectFolder;
 	
 	protected File sourceFolder;
@@ -29,6 +30,7 @@ public class CreateProject
 	
 	protected CreateProject(File projectFolder)
 	{
+		projectName = projectFolder.getName();
 		this.projectFolder = projectFolder;
 		
 		sourceFolder = new File(projectFolder, "src");
@@ -106,6 +108,11 @@ public class CreateProject
 			return new CreateProject(projectFolder);
 		}
 	} // end newProject(String name)
+	
+	public String getProjectName()
+	{
+		return projectName;
+	}
 	
 	/**
 	 * Returns a list of all the modules included in this project.
