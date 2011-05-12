@@ -10,26 +10,68 @@ public class EventAction extends AbstractAction
 	
 	protected Vector<ActionListener> listeners = new Vector<ActionListener>();
 	
+	/**
+	 * Create a new EventAction with only a description.
+	 * @param description The description to give this EventAction.
+	 */
 	public EventAction(String description)
 	{
 		super(description);
 	}
 	
+	/**
+	 * Create a new EventAction with a description and an icon.
+	 * @param description The description to give this EventAction.
+	 * @param icon The icon to give this EventAction.
+	 */
 	public EventAction(String description, Icon icon)
 	{
 		super(description, icon);
 	}
 	
+	/**
+	 * Create a new EventAction with a description and a command.
+	 * @param description The description to give this EventAction.
+	 * @param command The command to give this EventAction.
+	 */
 	public EventAction(String description, String command)
 	{
 		super(description);
-		super.putValue(Action.ACTION_COMMAND_KEY, command);
+		putValue(Action.ACTION_COMMAND_KEY, command);
 	}
 	
+	/**
+	 * Create a new EventAction with a description, a command, and an icon.
+	 * @param description The description to give this EventAction.
+	 * @param command The command to give this EventAction.
+	 * @param icon The icon to give this EventAction.
+	 */
 	public EventAction(String description, String command, Icon icon)
 	{
 		super(description, icon);
 		putValue(Action.ACTION_COMMAND_KEY, command);
+	}
+	
+	/**
+	 * Adds the given KeyStroke to the given Component to trigger this EventAction.
+	 * @param keystroke The KeyStroke to trigger this EventAction.
+	 * @param target The Component that will accept this EventAction.
+	 */
+	public void addKeyStroke(KeyStroke keystroke, JComponent target)
+	{
+		target.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keystroke, getCommand());
+		
+		ActionMap map = target.getActionMap();
+		map.put(getCommand(), this);
+	}
+	
+	/**
+	 * Returns the command this EventAction is set up to trigger.
+	 * @return The command this EventAction will trigger.
+	 */
+	public Object getCommand()
+	{
+		return getValue(Action.ACTION_COMMAND_KEY);
 	}
 	
 	public void addActionListener(ActionListener l)

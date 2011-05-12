@@ -59,7 +59,7 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	/**
 	 * Contains all the widgets necessary for the development and testing of projects. 
 	 */
-	protected Box editingPanel;
+	protected JPanel editingPanel;
 	protected static final String EDITING_PANEL = "EDITING";
 	
 	protected JToolBar editorToolbar;
@@ -138,7 +138,7 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		actionRunEmbedded = EventAction.createEventAction("Run on Command Module...", COMMAND_RUN_EMBEDDED, this);
 		
 		// The Editing card:
-		editingPanel = Box.createVerticalBox();
+		editingPanel = new JPanel(new FilledBoxLayout(FilledBoxLayout.AXIS_VERTICAL));
 		
 		editorToolbar = new JToolBar();
 		editorToolbar.setFloatable(false);
@@ -208,6 +208,9 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		chooserPanel.add(chooserLoad, BorderLayout.SOUTH);
 		
 		mainContainer.add(chooserPanel, CHOOSER_PANEL);
+		
+		// Add KeyStroke shortcuts to the EventActions:
+		actionModuleSave.addKeyStroke(KeyStroke.getKeyStroke("ctrl S"), (JComponent)mainContainer);
 		
 		// Set the chooser panel as the default
 		windowLayout.show(mainContainer, CHOOSER_PANEL);
@@ -443,5 +446,6 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	public void selectedTabChanged(ProjectTab selectedTab)
 	{
 		this.selectedTab = selectedTab;
+		actionModuleSave.setEnabled(selectedTab.isDirty());
 	}
 }

@@ -32,6 +32,8 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 	 */
 	protected Vector<TabSelectionListener> listeners = new Vector<TabSelectionListener>();
 	
+	protected boolean isUs;
+	
 	public ProjectTab(CreateProject project, TextEditorPane editor, JTabbedPane tabbedPane)
 	{
 		this(project, editor, tabbedPane, editor);
@@ -42,6 +44,8 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 		this.project = project;
 		this.editor = editor;
 		this.tabbedPane = tabbedPane;
+		
+		isUs = false;
 		
 		editor.addPropertyChangeListener(TextEditorPane.DIRTY_PROPERTY, this);
 	}
@@ -86,6 +90,12 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 				{
 					tabbedPane.setTitleAt(index, project.getProjectName());
 				}
+				
+				if (isUs)
+				{
+					for (TabSelectionListener listener : listeners)
+						listener.selectedTabChanged(this);
+				}
 			}
 			else
 				throw new ArrayIndexOutOfBoundsException();
@@ -96,7 +106,7 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 	{
 		if (e.getSource() == tabbedPane)
 		{
-			boolean isUs = (tabbedPane.getSelectedComponent() == editor);
+			isUs = (tabbedPane.getSelectedComponent() == editor);
 			if (isUs)
 			{
 				for (TabSelectionListener listener : listeners)
