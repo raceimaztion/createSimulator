@@ -150,6 +150,7 @@
 /**
  * Initializes the CommandModule interface.
  * Called automatically by the internal startup function.
+ * TODO: Move this to our main() function!
  */
 void cm_init(void);
 
@@ -166,6 +167,7 @@ void cm_power_off(void);
 /**
  * Initializes the Create/Roomba's serial port.
  * Called automatically by the internal startup function.
+ * TODO: Move this to our main() function!
  */
 void cm_start(void);
 

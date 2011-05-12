@@ -5,6 +5,7 @@ import create.simulator.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -12,8 +13,9 @@ import javax.swing.border.*;
 import org.fife.ui.rsyntaxtextarea.*;
 import org.fife.ui.rtextarea.*;
 
-public class EditorWindow implements ActionListener, WindowListener
+public class EditorWindow implements ActionListener, WindowListener, TabSelectionListener
 {
+	public static final String COMMAND_SAVE_MODULE = "save-module";
 	public static final String COMMAND_NEW_PROJECT = "new-project";
 	public static final String COMMAND_LOAD_PROJECT = "load-project";
 	public static final String COMMAND_CLOSE_PROJECT = "close-project";
@@ -65,9 +67,10 @@ public class EditorWindow implements ActionListener, WindowListener
 	protected JTabbedPane editorTabs;
 	protected JLabel statusBar;
 	
-	protected Vector<TextEditorPane> editorPanes = new Vector<TextEditorPane>();
-	protected Vector<RTextScrollPane> editorScrollers = new Vector<RTextScrollPane>();
+	protected Vector<ProjectTab> projectTabs = new Vector<ProjectTab>();
+	protected ProjectTab selectedTab;
 	
+	protected EventAction actionModuleSave;
 	protected EventAction actionProjectNew;
 	protected EventAction actionProjectLoad;
 	protected EventAction actionProjectClose;
@@ -120,6 +123,7 @@ public class EditorWindow implements ActionListener, WindowListener
 		mainContainer.setLayout(windowLayout);
 		
 		// Create all the EventActions:
+		actionModuleSave = EventAction.createEventAction("Save module", COMMAND_SAVE_MODULE, this);
 		actionProjectNew = EventAction.createEventAction("New project...", COMMAND_NEW_PROJECT, CreateUtils.loadIcon("new-project.png"), this);
 		actionProjectLoad = EventAction.createEventAction("Load project...", COMMAND_LOAD_PROJECT, this);
 		actionProjectClose = EventAction.createEventAction("Close project", COMMAND_CLOSE_PROJECT, this);
@@ -161,6 +165,8 @@ public class EditorWindow implements ActionListener, WindowListener
 		JMenuBar menubar = new JMenuBar();
 		
 		JMenu menuProject = new JMenu("Project");
+		menuProject.add(EventAction.createActionMenuItem(actionModuleSave));
+		menuProject.addSeparator();
 		menuProject.add(EventAction.createActionMenuItem(actionProjectNew));
 		menuProject.add(EventAction.createActionMenuItem(actionProjectLoad));
 		menuProject.add(EventAction.createActionMenuItem(actionProjectProperties));
@@ -238,13 +244,16 @@ public class EditorWindow implements ActionListener, WindowListener
 			
 			RTextScrollPane scroller = new RTextScrollPane(editor, true);
 			
-			editorPanes.add(editor);
-			editorScrollers.add(scroller);
+			ProjectTab tab = new ProjectTab(project, editor, editorTabs, scroller);
+			projectTabs.add(tab);
 			editorTabs.addTab(name, ICON_SOURCE, scroller);
 		}
 		
-		if (editorPanes.size() > 0)
+		if (projectTabs.size() > 0)
+		{
 			editorTabs.setSelectedIndex(0);
+			selectedTab = projectTabs.get(0);
+		}
 	}
 	
 	/**
@@ -256,11 +265,11 @@ public class EditorWindow implements ActionListener, WindowListener
 			return;
 		
 		project = null;
+		selectedTab = null;
 		editorProjectName.setText("");
 		editorProjectName.setVisible(false);
 		
-		editorPanes.removeAllElements();
-		editorScrollers.removeAllElements();
+		projectTabs.removeAllElements();
 		editorTabs.removeAll();
 		
 		updateProjectList();
@@ -319,14 +328,29 @@ public class EditorWindow implements ActionListener, WindowListener
 		}
 		
 		System.out.printf("Received a command: %s\n", command);
-		if (command.equals(COMMAND_NEW_PROJECT))
+		
+		if (command.equals(COMMAND_SAVE_MODULE))
+		{
+			// Project -> Save module
+			if (selectedTab != null)
+			{
+				try
+				{
+					selectedTab.getEditor().save();
+				}
+				catch (IOException er)
+				{
+					
+				}
+			}
+		}
+		else if (command.equals(COMMAND_NEW_PROJECT))
 		{
 			// Project -> New project...
 		}
 		else if (command.equals(COMMAND_LOAD_PROJECT))
 		{
 			// Project -> Load project...
-			// TODO: See if this is permanent enough:
 			EditorWindow newWindow = new EditorWindow();
 			newWindow.show();
 		}
@@ -414,5 +438,10 @@ public class EditorWindow implements ActionListener, WindowListener
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void selectedTabChanged(ProjectTab selectedTab)
+	{
+		this.selectedTab = selectedTab;
 	}
 }
