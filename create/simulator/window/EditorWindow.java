@@ -111,7 +111,7 @@ public class EditorWindow implements ActionListener, WindowListener
 	private void setup()
 	{
 		window = new JFrame("Create Simulator: Editor");
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		window.setMinimumSize(new Dimension(300, 450));
 		window.addWindowListener(this);
 		
@@ -259,6 +259,10 @@ public class EditorWindow implements ActionListener, WindowListener
 		editorProjectName.setText("");
 		editorProjectName.setVisible(false);
 		
+		editorPanes.removeAllElements();
+		editorScrollers.removeAllElements();
+		editorTabs.removeAll();
+		
 		updateProjectList();
 		windowLayout.show(mainContainer, CHOOSER_PANEL);
 	}
@@ -322,10 +326,14 @@ public class EditorWindow implements ActionListener, WindowListener
 		else if (command.equals(COMMAND_LOAD_PROJECT))
 		{
 			// Project -> Load project...
+			// TODO: See if this is permanent enough:
+			EditorWindow newWindow = new EditorWindow();
+			newWindow.show();
 		}
 		else if (command.equals(COMMAND_CLOSE_PROJECT))
 		{
 			// Project -> Close project
+			closeProject();
 		}
 		else if (command.equals(COMMAND_PROJECT_PROPERTIES))
 		{

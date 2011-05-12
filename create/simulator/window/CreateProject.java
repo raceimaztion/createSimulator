@@ -6,8 +6,6 @@ import java.util.*;
 import create.simulator.utils.*;
 
 import org.fife.ui.rsyntaxtextarea.*;
-import org.fife.ui.rsyntaxtextarea.FileLocation;
-
 
 /**
  * Contains all the information about a project required to build it, as well as starting a simulator/etc.
