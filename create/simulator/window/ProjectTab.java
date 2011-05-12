@@ -26,7 +26,7 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 	/**
 	 * This is the Component that's actually in the JTabbed pane
 	 */
-	protected Component component;
+	private Component component;
 	/**
 	 * The list of listeners.
 	 */
@@ -44,9 +44,11 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 		this.project = project;
 		this.editor = editor;
 		this.tabbedPane = tabbedPane;
+		this.component = component;
 		
 		isUs = false;
 		
+		tabbedPane.addChangeListener(this);
 		editor.addPropertyChangeListener(TextEditorPane.DIRTY_PROPERTY, this);
 	}
 	
@@ -77,28 +79,24 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 
 	public void propertyChange(PropertyChangeEvent e)
 	{
-		if (e.getSource() == editor)
+		if (e.getSource() != editor)
+			return;
+		
+		int index = tabbedPane.indexOfComponent(component);
+		if (index >= 0)
 		{
-			int index = tabbedPane.indexOfTabComponent(component);
-			if (index >= 0)
-			{
-				if (editor.isDirty())
-				{
-					tabbedPane.setTitleAt(index, project.getProjectName() + "*");
-				}
-				else
-				{
-					tabbedPane.setTitleAt(index, project.getProjectName());
-				}
-				
-				if (isUs)
-				{
-					for (TabSelectionListener listener : listeners)
-						listener.selectedTabChanged(this);
-				}
-			}
+			if (editor.isDirty())
+				tabbedPane.setTitleAt(index, editor.getFileName() + "*");
 			else
-				throw new ArrayIndexOutOfBoundsException();
+				tabbedPane.setTitleAt(index, editor.getFileName());
+		}
+		else
+			System.err.println("ProjectTab.propertyChange(): Component given is not in the JTabbedPane!");
+		
+		if (isUs)
+		{
+			for (TabSelectionListener listener : listeners)
+				listener.selectedTabChanged(this);
 		}
 	} // end propertyChange()
 	
@@ -106,14 +104,16 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 	{
 		if (e.getSource() == tabbedPane)
 		{
-			isUs = (tabbedPane.getSelectedComponent() == editor);
+			isUs = (tabbedPane.getSelectedComponent() == component);
+			System.out.print("ProjectTab.stateChanged(): isUs=");
+			System.out.println(isUs);
 			if (isUs)
 			{
 				for (TabSelectionListener listener : listeners)
 					listener.selectedTabChanged(this);
 			}
 		}
-	}
+	} // end stateChanged()
 	
 	public String getProjectName()
 	{
@@ -122,7 +122,7 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 	
 	public String getModuleName()
 	{
-		return null;
+		return editor.getFileName();
 	}
 	
 	public CreateProject getProject()

@@ -143,6 +143,8 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		actionRunSerial = EventAction.createEventAction("Run serial control...", COMMAND_RUN_SERIAL, this);
 		actionRunEmbedded = EventAction.createEventAction("Run on Command Module...", COMMAND_RUN_EMBEDDED, this);
 		
+		actionModuleSave.setEnabled(false);
+		
 		// The Editing card:
 //		editingPanel = new JPanel(new FilledBoxLayout(FilledBoxLayout.AXIS_VERTICAL));
 		editingPanel = new JPanel(new BorderLayout());
@@ -242,8 +244,6 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		}
 		
 		this.project = project;
-//		editorProjectName.setText(project.getProjectName());
-//		editorProjectName.setVisible(true);
 		
 		windowLayout.show(mainContainer, EDITING_PANEL);
 		
@@ -258,6 +258,7 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 			RTextScrollPane scroller = new RTextScrollPane(editor, true);
 			
 			ProjectTab tab = new ProjectTab(project, editor, editorTabs, scroller);
+			tab.addTabSelectionListener(this);
 			projectTabs.add(tab);
 			editorTabs.addTab(name, ICON_SOURCE, scroller);
 		}
@@ -279,21 +280,11 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		
 		project = null;
 		selectedTab = null;
-//		editorProjectName.setText("");
-//		editorProjectName.setVisible(false);
 		
 		projectTabs.removeAllElements();
 		editorTabs.removeAll();
 		
-		updateProjectList();
 		windowLayout.show(mainContainer, CHOOSER_PANEL);
-	}
-	
-	/**
-	 * Updates the list of known projects in the selectable list.
-	 */
-	protected void updateProjectList()
-	{
 	}
 	
 	/**
@@ -379,6 +370,8 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		else if (command.equals(COMMAND_PROJECT_EXIT))
 		{
 			// Project -> Exit
+			window.setVisible(false);
+			window.dispose();
 		}
 		else if (command.equals(COMMAND_EDIT_CUT))
 		{
@@ -455,6 +448,7 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 
 	public void selectedTabChanged(ProjectTab selectedTab)
 	{
+		System.out.println("EditorWindow.selectedTabChanged()");
 		this.selectedTab = selectedTab;
 		actionModuleSave.setEnabled(selectedTab.isDirty());
 	}
