@@ -1,6 +1,7 @@
 package create.simulator.window;
 
 import java.awt.*;
+import java.util.*;
 
 public class FilledBoxLayout implements LayoutManager
 {
@@ -9,7 +10,11 @@ public class FilledBoxLayout implements LayoutManager
 	public static final int AXIS_HORIZONTAL = 0x501;
 	public static final int AXIS_VERTICAL = 0x502;
 	
+	public static final String PACK_FILL = "fill";
+	public static final String PACK_NOFILL = "nofill";
+	
 	protected int axis;
+	protected Vector<Component> packedFill = new Vector<Component>();
 	
 	public FilledBoxLayout()
 	{
@@ -97,31 +102,66 @@ public class FilledBoxLayout implements LayoutManager
 	{
 		if (axis == AXIS_HORIZONTAL)
 		{ // Horizontal
+			// Check the estimated width of the container
+			int width = 0;
+			for (Component cur : target.getComponents())
+				width += cur.getPreferredSize().width;
+			
+			int extra = target.getSize().width - width;
+			int extraEach = extra/Math.max(1, packedFill.size());
+			
+			// Now resize the components
 			int height = target.getHeight(), curX = 0;
 			for (Component cur : target.getComponents())
 			{
-				cur.setBounds(curX, 0, cur.getPreferredSize().width, height);
-				curX += cur.getWidth();
+				if (packedFill.contains(cur))
+				{
+					cur.setBounds(curX, 0, cur.getPreferredSize().width + extraEach, height);
+					curX += cur.getWidth() + extraEach;
+				}
+				else
+				{
+					cur.setBounds(curX, 0, cur.getPreferredSize().width, height);
+					curX += cur.getWidth();
+				}
 			}
 		}
 		else // Vertical
 		{
+			// Check the estimated height of the container
+			int height = 0;
+			for (Component cur : target.getComponents())
+				height += cur.getPreferredSize().height;
+			
+			int extra = target.getSize().height;
+			int extraEach = extra/Math.max(1, packedFill.size());
+			
+			// Now resize the components
 			int width = target.getWidth(), curY = 0;
 			for (Component cur : target.getComponents())
 			{
-				cur.setBounds(0, curY, width, cur.getPreferredSize().height);
-				curY += cur.getHeight();
+				if (packedFill.contains(cur))
+				{
+					cur.setBounds(0, curY, width, cur.getPreferredSize().height + extraEach);
+					curY += cur.getHeight() + extraEach;
+				}
+				else
+				{
+					cur.setBounds(0, curY, width, cur.getPreferredSize().height);
+					curY += cur.getHeight();
+				}
 			}
 		}
 	} // end layoutContainer()
 
 	public void addLayoutComponent(String name, Component comp)
 	{
-		// Unused method
+		if (name != null && name.equals(PACK_FILL))
+			packedFill.add(comp);
 	}
 
 	public void removeLayoutComponent(Component comp)
 	{
-		// Unused method
+		packedFill.remove(comp);
 	}
 } // end FilledBoxLayout class

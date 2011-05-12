@@ -44,6 +44,12 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	protected CardLayout windowLayout;
 	
 	/**
+	 * Contains all the widgets necessary for creating a new project.
+	 */
+	protected JPanel creatorPanel;
+	protected static final String CREATOR_PANEL = "CREATOR";
+	
+	/**
 	 * Contains all the widgets necessary for selecting an existing project or creating a new one.
 	 */
 	protected JPanel chooserPanel;
@@ -63,7 +69,7 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	protected static final String EDITING_PANEL = "EDITING";
 	
 	protected JToolBar editorToolbar;
-	protected JLabel editorProjectName;
+//	protected JLabel editorProjectName;
 	protected JTabbedPane editorTabs;
 	protected JLabel statusBar;
 	
@@ -138,7 +144,8 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		actionRunEmbedded = EventAction.createEventAction("Run on Command Module...", COMMAND_RUN_EMBEDDED, this);
 		
 		// The Editing card:
-		editingPanel = new JPanel(new FilledBoxLayout(FilledBoxLayout.AXIS_VERTICAL));
+//		editingPanel = new JPanel(new FilledBoxLayout(FilledBoxLayout.AXIS_VERTICAL));
+		editingPanel = new JPanel(new BorderLayout());
 		
 		editorToolbar = new JToolBar();
 		editorToolbar.setFloatable(false);
@@ -149,18 +156,21 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		editorToolbar.add(EventAction.createActionToolbarButton(actionEditPaste));
 		editorToolbar.addSeparator();
 		editorToolbar.add(EventAction.createActionToolbarButton(actionEditFind));
-		editingPanel.add(editorToolbar);
+//		editingPanel.add(editorToolbar);
+		editingPanel.add(editorToolbar, BorderLayout.NORTH);
 		
-		editorProjectName = new JLabel("bumper");
-		editorProjectName.setVisible(false);
-		editingPanel.add(editorProjectName);
+//		editorProjectName = new JLabel("bumper");
+//		editorProjectName.setVisible(false);
+//		editingPanel.add(editorProjectName);
 		
 		editorTabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-		editingPanel.add(editorTabs);
+//		editingPanel.add(editorTabs);
+		editingPanel.add(editorTabs, BorderLayout.CENTER);
 		
 		statusBar = new JLabel("Ready");
 		statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		editingPanel.add(statusBar);
+//		editingPanel.add(statusBar);
+		editingPanel.add(statusBar, BorderLayout.SOUTH);
 		
 		JMenuBar menubar = new JMenuBar();
 		
@@ -232,8 +242,8 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		}
 		
 		this.project = project;
-		editorProjectName.setText(project.getProjectName());
-		editorProjectName.setVisible(true);
+//		editorProjectName.setText(project.getProjectName());
+//		editorProjectName.setVisible(true);
 		
 		windowLayout.show(mainContainer, EDITING_PANEL);
 		
@@ -269,8 +279,8 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		
 		project = null;
 		selectedTab = null;
-		editorProjectName.setText("");
-		editorProjectName.setVisible(false);
+//		editorProjectName.setText("");
+//		editorProjectName.setVisible(false);
 		
 		projectTabs.removeAllElements();
 		editorTabs.removeAll();
