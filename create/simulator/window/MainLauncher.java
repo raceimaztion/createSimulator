@@ -2,6 +2,9 @@ package create.simulator.window;
 
 import create.simulator.utils.*;
 import java.io.*;
+import javax.swing.Action;
+
+import org.fife.ui.rtextarea.RTextArea;
 
 public class MainLauncher
 {
@@ -92,6 +95,22 @@ public class MainLauncher
 		
 		// Debugging:
 		System.out.printf("Sketchbook folder: %s\n", SKETCHBOOK_FOLDER);
+		
+		// Set up the RTextArea Action parameters:
+		{
+			@SuppressWarnings("unused")
+			RTextArea textArea = new RTextArea();
+			
+			Action cut = RTextArea.getAction(RTextArea.CUT_ACTION);
+			cut.putValue(Action.NAME, "Cut");
+			cut.putValue(Action.SHORT_DESCRIPTION, null);
+			Action copy = RTextArea.getAction(RTextArea.COPY_ACTION);
+			copy.putValue(Action.NAME, "Copy");
+			copy.putValue(Action.SHORT_DESCRIPTION, null);
+			Action paste = RTextArea.getAction(RTextArea.PASTE_ACTION);
+			paste.putValue(Action.NAME, "Paste");
+			paste.putValue(Action.SHORT_DESCRIPTION, null);
+		}
 		
 		// Launch the EditorWindow:
 		EditorWindow window = new EditorWindow();

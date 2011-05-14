@@ -154,7 +154,7 @@ public class EventAction extends AbstractAction
 	 * @param ea The EventAction to have the JButton wrap.
 	 * @return The new JButton.
 	 */
-	public static JButton createActionButton(EventAction ea)
+	public static JButton createActionButton(Action ea)
 	{
 		return new JButton(ea);
 	}
@@ -164,7 +164,7 @@ public class EventAction extends AbstractAction
 	 * @param ea The EventAction to have the JButton wrap.
 	 * @return The new JButton.
 	 */
-	public static JButton createActionToolbarButton(EventAction ea)
+	public static JButton createActionToolbarButton(Action ea)
 	{
 		JButton button = new JButton(ea);
 		if (button.getIcon() != null)
@@ -181,7 +181,7 @@ public class EventAction extends AbstractAction
 	 * @param ea The EventAction to have the JMenuItem wrap.
 	 * @param ea The EventAction to have the JMenuItem wrap.
 	 */
-	public static JMenuItem createActionMenuItem(EventAction ea)
+	public static JMenuItem createActionMenuItem(Action ea)
 	{
 		JMenuItem item = new JMenuItem(ea);
 		item.setIcon(null);

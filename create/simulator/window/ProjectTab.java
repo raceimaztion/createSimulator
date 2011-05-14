@@ -31,7 +31,9 @@ public class ProjectTab implements PropertyChangeListener, ChangeListener
 	 * The list of listeners.
 	 */
 	protected Vector<TabSelectionListener> listeners = new Vector<TabSelectionListener>();
-	
+	/**
+	 * Whether we are the currently-selected tab.
+	 */
 	protected boolean isUs;
 	
 	public ProjectTab(CreateProject project, TextEditorPane editor, JTabbedPane tabbedPane)

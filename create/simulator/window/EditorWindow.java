@@ -83,9 +83,12 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	protected EventAction actionProjectProperties;
 	protected EventAction actionProjectExit;
 	
-	protected EventAction actionEditCut;
-	protected EventAction actionEditCopy;
-	protected EventAction actionEditPaste;
+//	protected EventAction actionEditCut;
+//	protected EventAction actionEditCopy;
+//	protected EventAction actionEditPaste;
+	protected Action actionEditCut;
+	protected Action actionEditCopy;
+	protected Action actionEditPaste;
 	protected EventAction actionEditFind;
 	
 	protected EventAction actionRunSimulator;
@@ -135,13 +138,17 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		actionProjectClose = EventAction.createEventAction("Close project", COMMAND_CLOSE_PROJECT, this);
 		actionProjectProperties = EventAction.createEventAction("Project properties...", COMMAND_PROJECT_PROPERTIES, this);
 		actionProjectExit = EventAction.createEventAction("Exit", COMMAND_PROJECT_EXIT, this);
-		actionEditCut = EventAction.createEventAction("Cut", COMMAND_EDIT_CUT, this);
-		actionEditCopy = EventAction.createEventAction("Copy", COMMAND_EDIT_COPY, this);
-		actionEditPaste = EventAction.createEventAction("Paste", COMMAND_EDIT_PASTE, this);
+//		actionEditCut = EventAction.createEventAction("Cut", COMMAND_EDIT_CUT, this);
+//		actionEditCopy = EventAction.createEventAction("Copy", COMMAND_EDIT_COPY, this);
+//		actionEditPaste = EventAction.createEventAction("Paste", COMMAND_EDIT_PASTE, this);
 		actionEditFind = EventAction.createEventAction("Find...", COMMAND_EDIT_FIND, this);
 		actionRunSimulator = EventAction.createEventAction("Run simulator...", COMMAND_RUN_SIMULATOR, this);
 		actionRunSerial = EventAction.createEventAction("Run serial control...", COMMAND_RUN_SERIAL, this);
 		actionRunEmbedded = EventAction.createEventAction("Run on Command Module...", COMMAND_RUN_EMBEDDED, this);
+		
+		actionEditCut = RTextArea.getAction(RTextArea.CUT_ACTION);
+		actionEditCopy = RTextArea.getAction(RTextArea.COPY_ACTION);
+		actionEditPaste = RTextArea.getAction(RTextArea.PASTE_ACTION);
 		
 		actionModuleSave.setEnabled(false);
 		
