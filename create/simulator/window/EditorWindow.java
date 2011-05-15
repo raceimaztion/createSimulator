@@ -21,9 +21,6 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	public static final String COMMAND_CLOSE_PROJECT = "close-project";
 	public static final String COMMAND_PROJECT_PROPERTIES = "project-properties";
 	public static final String COMMAND_PROJECT_EXIT = "exit-project";
-	public static final String COMMAND_EDIT_CUT = "edit-cut";
-	public static final String COMMAND_EDIT_COPY = "edit-copy";
-	public static final String COMMAND_EDIT_PASTE = "edit-paste";
 	public static final String COMMAND_EDIT_FIND = "edit-find";
 	public static final String COMMAND_RUN_SIMULATOR = "run-simulator";
 	public static final String COMMAND_RUN_SERIAL= "run-serial";
@@ -48,6 +45,8 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	 */
 	protected JPanel creatorPanel;
 	protected static final String CREATOR_PANEL = "CREATOR";
+	protected JTextField creatorName;
+	protected JButton creatorCreate;
 	
 	/**
 	 * Contains all the widgets necessary for selecting an existing project or creating a new one.
@@ -69,7 +68,6 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	protected static final String EDITING_PANEL = "EDITING";
 	
 	protected JToolBar editorToolbar;
-//	protected JLabel editorProjectName;
 	protected JTabbedPane editorTabs;
 	protected JLabel statusBar;
 	
@@ -83,9 +81,6 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	protected EventAction actionProjectProperties;
 	protected EventAction actionProjectExit;
 	
-//	protected EventAction actionEditCut;
-//	protected EventAction actionEditCopy;
-//	protected EventAction actionEditPaste;
 	protected Action actionEditCut;
 	protected Action actionEditCopy;
 	protected Action actionEditPaste;
@@ -138,9 +133,6 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		actionProjectClose = EventAction.createEventAction("Close project", COMMAND_CLOSE_PROJECT, this);
 		actionProjectProperties = EventAction.createEventAction("Project properties...", COMMAND_PROJECT_PROPERTIES, this);
 		actionProjectExit = EventAction.createEventAction("Exit", COMMAND_PROJECT_EXIT, this);
-//		actionEditCut = EventAction.createEventAction("Cut", COMMAND_EDIT_CUT, this);
-//		actionEditCopy = EventAction.createEventAction("Copy", COMMAND_EDIT_COPY, this);
-//		actionEditPaste = EventAction.createEventAction("Paste", COMMAND_EDIT_PASTE, this);
 		actionEditFind = EventAction.createEventAction("Find...", COMMAND_EDIT_FIND, this);
 		actionRunSimulator = EventAction.createEventAction("Run simulator...", COMMAND_RUN_SIMULATOR, this);
 		actionRunSerial = EventAction.createEventAction("Run serial control...", COMMAND_RUN_SERIAL, this);
@@ -153,7 +145,6 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		actionModuleSave.setEnabled(false);
 		
 		// The Editing card:
-//		editingPanel = new JPanel(new FilledBoxLayout(FilledBoxLayout.AXIS_VERTICAL));
 		editingPanel = new JPanel(new BorderLayout());
 		
 		editorToolbar = new JToolBar();
@@ -165,20 +156,13 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		editorToolbar.add(EventAction.createActionToolbarButton(actionEditPaste));
 		editorToolbar.addSeparator();
 		editorToolbar.add(EventAction.createActionToolbarButton(actionEditFind));
-//		editingPanel.add(editorToolbar);
 		editingPanel.add(editorToolbar, BorderLayout.NORTH);
 		
-//		editorProjectName = new JLabel("bumper");
-//		editorProjectName.setVisible(false);
-//		editingPanel.add(editorProjectName);
-		
 		editorTabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-//		editingPanel.add(editorTabs);
 		editingPanel.add(editorTabs, BorderLayout.CENTER);
 		
 		statusBar = new JLabel("Ready");
 		statusBar.setBorder(new BevelBorder(BevelBorder.LOWERED));
-//		editingPanel.add(statusBar);
 		editingPanel.add(statusBar, BorderLayout.SOUTH);
 		
 		JMenuBar menubar = new JMenuBar();
@@ -358,6 +342,14 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		else if (command.equals(COMMAND_NEW_PROJECT))
 		{
 			// Project -> New project...
+			if (project != null)
+			{
+				// Open a new window
+			}
+			else
+			{
+				// Use this window
+			}
 		}
 		else if (command.equals(COMMAND_LOAD_PROJECT))
 		{
@@ -380,18 +372,6 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 			window.setVisible(false);
 			window.dispose();
 		}
-		else if (command.equals(COMMAND_EDIT_CUT))
-		{
-			// Edit -> Cut
-		}
-		else if (command.equals(COMMAND_EDIT_COPY))
-		{
-			// Edit -> Copy
-		}
-		else if (command.equals(COMMAND_EDIT_PASTE))
-		{
-			// Edit -> Paste
-		}
 		else if (command.equals(COMMAND_EDIT_FIND))
 		{
 			// Edit -> Find
@@ -413,43 +393,36 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 
 	public void windowActivated(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowClosed(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowClosing(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowDeactivated(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowDeiconified(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowIconified(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void windowOpened(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 
