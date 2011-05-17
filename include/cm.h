@@ -148,13 +148,6 @@
  * CommandModule function headers: *
  * ******************************* */
 /**
- * Initializes the CommandModule interface.
- * Called automatically by the internal startup function.
- * TODO: Move this to our main() function!
- */
-void cm_init(void);
-
-/**
  * Turns the Create/Roomba on.
  */
 void cm_power_on(void);
@@ -446,49 +439,21 @@ uint16_t cm_read_requested_right_speed();
  */
 uint16_t cm_read_requested_left_speed();
 
+/**
+ * Returns the robot's current power state. 1 for on, 0 for off.
+ */
+uint8_t cm_robot_power_status();
+
+/**
+ * Waits for the specified length of time in milliseconds.
+ */
+void cm_wait_ms(uint16_t &time);
+
 /* ************************************************ *
  * Functions intended to be private to this module: *
  * ************************************************ */
-void sendByte(const uint8_t &value)
-{
-#ifdef EMBEDDED
-	while(!(UCSR0A & _BV(UDRE0))) ;
-	UDR0 = data;
-#else // Typically, LOCAL is defined if EMBEDDED isn't
-	printf("0x%02X\n", value);
-#endif	
-}
-
-void sendWord(const uint16_t &value)
-{
-#ifdef EMBEDDED
-	sendByte(0xff & (value >> 8));
-	sendByte(0xff & value);
-#else // Typically, LOCAL is defined if EMBEDDED isn't
-	printf("0x%04X\n", value);
-#endif
-}
-
-uint8_t readByte()
-{
-#ifdef EMBEDDED
-	while(!(UCSR0A & _BV(RXC0))) ;
-	return UDR0;
-#else // Typically, LOCAL is defined if EMBEDDED isn't
-	int value;
-	scanf("0x%x", &value);
-	return (uint8_t)(0xff & value);
-#endif	
-}
-
-uint16_t readWord()
-{
-#ifdef EMBEDDED
-	return TO_UINT16(readByte(), readByte());
-#else // Typically, LOCAL is defined if EMBEDDED isn't
-	int value;
-	scanf("0x%x", &value);
-	return (uint16_t)(0xffff & value);
-#endif
-}
+void sendByte(const uint8_t &value);
+void sendWord(const uint16_t &value);
+uint8_t readByte();
+uint16_t readWord();
 

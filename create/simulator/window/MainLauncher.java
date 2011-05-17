@@ -145,4 +145,13 @@ public class MainLauncher
 		
 		return SKETCHBOOK_FOLDER.list(filter);
 	}
+	
+	/**
+	 * Returns an enum that specifies the currently-running platform.
+	 * @return
+	 */
+	public static Platform getRuntimePlatform()
+	{
+		return RUNTIME_PLATFORM;
+	}
 }

@@ -94,6 +94,8 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	
 	protected Container mainContainer;
 	
+	protected BuildProblemDialog buildProblemDialog;
+	
 	/**
 	 * Creates a new EditorWindow with no CreateProject.
 	 */
@@ -220,6 +222,8 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		
 		window.pack();
 		window.setLocationRelativeTo(null);
+		
+		buildProblemDialog = new BuildProblemDialog(window);
 	} // end setup()
 	
 	/**
@@ -388,6 +392,27 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 			CreateProject newProject = CreateProject.loadProject(projectName);
 			if (newProject != null)
 				setProject(newProject);
+		}
+		else if (command.equals(COMMAND_RUN_EMBEDDED))
+		{
+			// Run -> Run on Command Module...
+		}
+		else if (command.equals(COMMAND_RUN_SERIAL))
+		{
+			// Run -> Run serial control...
+		}
+		else if (command.equals(COMMAND_RUN_SIMULATOR))
+		{
+			// Run -> Run simulator...
+			BuildProblem problem = project.buildSimulatorProject();
+			if (problem == null)
+			{
+				JOptionPane.showMessageDialog(window, "Compile completed successfully.", "Create Simulator", JOptionPane.INFORMATION_MESSAGE);
+			}
+			else
+			{
+				buildProblemDialog.showMessage(problem);
+			}
 		}
 	} // end actionPerformed()
 

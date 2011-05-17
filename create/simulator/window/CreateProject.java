@@ -48,9 +48,61 @@ public class CreateProject
 	/**
 	 * Compiles the current code for execution on this computer.
 	 */
-	public void buildSimulatorProject()
+	public BuildProblem buildSimulatorProject()
 	{
 		// TODO: Build the project for local simulation
+		// If we're running Linux, try compiling with GCC:
+		if (MainLauncher.getRuntimePlatform() == Platform.LINUX)
+		{
+			// Try compiling the project under Linux using GCC:
+			try
+			{
+				Runtime runtime = Runtime.getRuntime();
+				
+				// Copy the source library into the project folder
+				
+				// Compile the source
+				
+				// Remove the source library 
+				
+				// gcc -o "{$localBinFolder}/{$projectName}" {list of all source files}
+				String command = String.format("gcc -o \"%s/%s\"", localBinFolder.getPath(), getProjectName());
+				for (String module : getModuleNames())
+				{
+					command += String.format(" %s", module);
+				}
+				
+				Process compiler = runtime.exec(command, null, sourceFolder);
+				InputStream stdIn = compiler.getInputStream();
+				InputStream errIn = compiler.getErrorStream();
+				int result = compiler.waitFor();
+				
+				if (result == 0)
+				{
+					// We succeeded
+					return null;
+				}
+				else
+				{
+					// Something failed
+					return new BuildProblem(this, new BufferedReader(new InputStreamReader(stdIn)), new BufferedReader(new InputStreamReader(errIn)), result);
+				}
+			}
+			catch (IOException er)
+			{
+				
+			}
+			catch (InterruptedException er)
+			{
+				
+			}
+			return new BuildProblem(this, "Compiler failed.", "Unhandled error ocurred.", -1);
+		}
+		else
+		{
+			// Fail, we don't support other OSes just yet
+			return new BuildProblem(this, "Operating System not supported.", "Operating System not supported.", -2);
+		}
 	}
 	
 	/**
