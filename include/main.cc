@@ -9,6 +9,10 @@
 void cm_power_on()
 {
 	// Turn the robot on
+#ifdef EMBEDDED
+#else // #else ifdef LOCAL
+#endif
+
 }
 
 void sendByte(const uint8_t &value)
