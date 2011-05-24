@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>Create Simulator - Simulation Interface</title>
+	</head>
+	<body>
+		<h1>Create Simulator - Simulation Interface</h1>
+		<p>The simulation interface needs a few additional commands not included in iRobot's
+				Open Interface v3, the communication protocol used by their Roomba and Create
+				devices. For this reason, we have added a few extra commands that are
+				intercepted by the repeater interface and translated so they will actually
+				work, or at least partially work the way intended.</p>
+		<p>The additional commands are listed as follows:
+			<ul><li><tt>PowerOn</tt>: As the code running on the Command Module is allowed to
+						turn the robot on and off, the code running locally must be able to
+						turn the virtual robot on and off, as well as at least checking the
+						power state of the robot over the serial cable. This command tells the
+						robot to power on.</li>
+				<li><tt>PowerOff</tt>: Tells the robot (virtual or real) to power off.</li>
+				<li><tt>RobotIsOn</tt>: A virtual sensor command that asks if the robot is
+						powered on. Returns 0x01 if the robot is actually on or 0x00 if it
+						is not.</li>
+			</ul></p>
+	</body>
+</html>
+

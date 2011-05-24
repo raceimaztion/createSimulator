@@ -158,13 +158,6 @@ void cm_power_on(void);
 void cm_power_off(void);
 
 /**
- * Initializes the Create/Roomba's serial port.
- * Called automatically by the internal startup function.
- * TODO: Move this to our main() function!
- */
-void cm_start(void);
-
-/**
  * Grants full control of the robot (and all consequences) to your program.
  */
 void cm_full_mode(void);
@@ -267,6 +260,10 @@ void cm_play_song(uint8_t song_number);
  * Sensor-reading functions: *
  * ************************* */
 
+/*
+TODO: Implement the "Bumps and Wheel Drops" sensor request. code #7. formatted byte.
+*/
+
 /**
  * Returns 1 if the robot currently sees a wall on its right side.
  * Note: There is only one wall sensor on all iRobot robots.
@@ -310,7 +307,7 @@ TODO: Implement something to deal with the "Low Side Driver and Wheel Overcurren
 uint8_t cm_read_ir();
 
 /*
-TODO: Implement the "Buttons" sensor request. code #18.
+TODO: Implement the "Buttons" sensor request. code #18. !important!
 */
 
 /**
