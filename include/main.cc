@@ -286,7 +286,7 @@ uint8_t cm_read_wall()
 {
 	sendByte(CmdSensor);
 	padCommand();
-	sendByte(SenWall);
+	sendByte(SEN_WALL);
 	endCommand();
 	
 	return readByte();
@@ -299,7 +299,7 @@ uint8_t cm_read_left_cliff()
 {
 	sendByte(CmdSensor);
 	padCommand();
-	sendByte(SenCliffL);
+	sendByte(SEN_CLIFF_LEFT);
 	endCommand();
 	
 	return readByte();
@@ -312,7 +312,7 @@ uint8_t cm_read_front_left_cliff()
 {
 	sendByte(CmdSensor);
 	padCommand();
-	sendByte(SenCliffFL);
+	sendByte(SEN_CLIFF_FRONT_LEFT);
 	endCommand();
 	
 	return readByte();
@@ -325,7 +325,7 @@ uint8_t cm_read_front_right_cliff()
 {
 	sendByte(CmdSensor);
 	padCommand();
-	sendByte(SenCliffFR);
+	sendByte(SEN_CLIFF_FRONT_RIGHT);
 	endCommand();
 	
 	return readByte();
@@ -338,7 +338,7 @@ uint8_t cm_read_right_cliff()
 {
 	sendByte(CmdSensor);
 	padCommand();
-	sendByte(SenCliffR);
+	sendByte(SEN_CLIFF_RIGHT);
 	endCommand();
 	
 	return readByte();
@@ -351,7 +351,7 @@ uint8_t cm_read_virtual_wall()
 {
 	sendByte(CmdSensor);
 	padCommand();
-	sendByte(SenVWall);
+	sendByte(SEN_VIRTUAL_WALL);
 	endCommand();
 	
 	return readByte();
@@ -366,7 +366,15 @@ TODO: Implement something to deal with the "Low Side Driver and Wheel Overcurren
  * Reads the byte last received from the IR sensor.
  * See the REMOTE_* codes in the cm.h header.
  */
-uint8_t cm_read_ir();
+uint8_t cm_read_ir()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_IR_CODE);
+	endCommand();
+	
+	return readByte();
+}
 
 /*
 TODO: Implement the "Buttons" sensor request. code #18.
@@ -376,48 +384,112 @@ TODO: Implement the "Buttons" sensor request. code #18.
  * Reads the distance the robot has moved since the last time it was asked.
  * Note: Units are in millimeters.
  */
-int16_t cm_read_distance();
+int16_t cm_read_distance()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_DISTANCE);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the angle the robot has turned since the last time it was asked.
  * Note: Units are in degrees, with positive values to the right and negative
  *   values to the left.
  */
-int16_t cm_read_angle();
+int16_t cm_read_angle()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_ANGLE);
+	endCommand();
+	
+	return readWord();
+}}
 
 /**
  * Reads the battery's current charging state.
  * See the BATTERY_* codes in the cm.h header.
  */
-uint8_t cm_read_charging_state();
+uint8_t cm_read_charging_state()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_CHARGE_STATE);
+	endCommand();
+	
+	return readByte();
+}
 
 /**
  * Reads the battery's current voltage in millivolts.
  */
-uint16_t cm_read_battery_voltage();
+uint16_t cm_read_battery_voltage()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_VOLTAGE);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the amount of current running into (positive values) or out of (negative values)
  *   the robot's battery.
  */
-int16_t cm_read_battery_current();
+int16_t cm_read_battery_current()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_CURRENT);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the battery's current temperature in degrees Celsius.
  */
-int8_t cm_read_battery_temperature();
+int8_t cm_read_battery_temperature()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_TEMPERATURE);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the battery's current charge in milliamp-hours.
  * Note: This value is not accurate if the robot is running off Alkaline batteries.
  */
-uint16_t cm_read_battery_charge();
+uint16_t cm_read_battery_charge()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_CHARGE);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the battery's estimated charge capacity in milliamp-hours.
  * Note: This value is not accurate if the robot is running off Alkaline batteries.
  */
-uint16_t cm_read_battery_capacity();
+uint16_t cm_read_battery_capacity()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_CAPACITY);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the strength of the wall sensor's signal.
