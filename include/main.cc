@@ -2,6 +2,13 @@
 
 #include "cm.h"
 
+// For waiting in milliseconds
+#ifdef WINDOW
+#include <Winbase.h>
+#else
+#include <unintst.h>
+#endif
+
 /*
  * This is the main library source file for the Create Simulator.
  */
@@ -9,7 +16,7 @@
 // Turns the robot on.
 void cm_power_on(void)
 {
-#ifdef EMBEDDED
+#ifdef MODE_EMBEDDED
 	if (!cm_robot_power_status())
 	{
 		while (!cm_robot_power_status())
@@ -22,7 +29,7 @@ void cm_power_on(void)
 		}
 	}
 #endif
-#ifdef LOCAL
+#ifdef MODE_LOCAL
 	// Tell the repeater to power the robot on
 	printf("PowerOn\n");
 #endif
@@ -31,9 +38,20 @@ void cm_power_on(void)
 // Turns the Create/Roomba off.
 void cm_power_off(void)
 {
-#ifdef EMBEDDED
+#ifdef MODE_EMBEDDED
+	if (cm_robot_power_status())
+	{
+		while (cm_robot_power_status())
+		{
+			RobotPwrToggleLow;
+			cm_wait_ms(500); // Delay in this state
+			RobotPwrToggleHigh; // Low to high transition to toggle power
+			cm_wait_ms(100); // Delay in this state
+			RobotPwrToggleLow;
+		}
+	}
 #endif
-#ifdef LOCAL
+#ifdef MODE_LOCAL
 	// Tell the repeater to turn the robot off
 	printf("PowerOff\n");
 #endif
@@ -86,11 +104,11 @@ void cm_baud_rate(uint8_t baud)
 	if(baud_code <= 11)
 	{
 		sendByte(CmdBaud);
-#ifdef EMBEDDED
+#ifdef MODE_EMBEDDED
 		UCSR0A |= _BV(TXC0);
 #endif
 		sendByte(baud_code);
-#ifdef EMBEDDED
+#ifdef MODE_EMBEDDED
 		// Wait until transmit is complete
 		while(!(UCSR0A & _BV(TXC0))) ;
 		
@@ -495,31 +513,71 @@ uint16_t cm_read_battery_capacity()
  * Reads the strength of the wall sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_wall_signal();
+uint16_t cm_read_wall_signal()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_WALL_SIGNAL);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the strength of the far left cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_left_cliff_signal();
+uint16_t cm_read_left_cliff_signal()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_LEFT_CLIFF_SIGNAL);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the strength of the front left cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_front_left_cliff_signal();
+uint16_t cm_read_front_left_cliff_signal()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_FRONT_LEFT_CLIFF_SIGNAL);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the strength of the front right cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_front_right_cliff_signal();
+uint16_t cm_read_front_right_cliff_signal()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_FRONT_RIGHT_CLIFF_SIGNAL);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Reads the strength of the far right cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_right_cliff_signal();
+uint16_t cm_read_right_cliff_signal()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_RIGHT_CLIFF_SIGNAL);
+	endCommand();
+	
+	return readWord();
+}
 
 /*
 TODO: Implement the "Cargo Bay Digital Inputs" sensor request. code #32, formatted byte.
@@ -533,83 +591,166 @@ TODO: Implement the "Charging Sources Available" sensor request. code #34, forma
  * Reads the current Open Interface mode.
  * See the OI_MODE_* codes in the cm.h header.
  */
-uint8_t cm_read_oi_mode();
+uint8_t cm_read_oi_mode()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_OI_MODE);
+	endCommand();
+	
+	return readByte();
+}
 
 /**
  * Reads the number of the currently-playing song.
  * Range is 0-15.
  */
-uint8_t cm_read_current_song_number();
+uint8_t cm_read_current_song_number()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_SONG_NUMBER);
+	endCommand();
+	
+	return readByte();
+}
 
 /**
  * Returns 1 if there is a song currently playing.
  */
-uint8_t cm_read_is_song_playing();
+uint8_t cm_read_is_song_playing()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_SONG_PLAYING);
+	endCommand();
+	
+	return readByte();
+}
 
 /**
  * Returns the last-requested speed.
  * Range is -500 to 500, units are in millimeters per second.
  */
-uint16_t cm_read_requested_speed();
+uint16_t cm_read_requested_speed()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_SPEED);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Returns the last-requested radius.
  * Range is -32768 to 32767, units are in millimeters.
  */
-uint16_t cm_read_requested_radius();
+uint16_t cm_read_requested_radius()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_RADIUS);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Returns the last-requested speed for the right wheel.
  * Range is -500 to 500, in millimeters per second.
  */
-uint16_t cm_read_requested_right_speed();
+uint16_t cm_read_requested_right_speed()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_RIGHT_WHEEL_SPEED);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Returns the last-requested speed for the left wheel.
  * Range is -500 to 500, in millimeters per second.
  */
-uint16_t cm_read_requested_left_speed();
+uint16_t cm_read_requested_left_speed()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_LEFT_WHEEL_SPEED);
+	endCommand();
+	
+	return readWord();
+}
 
 /**
  * Returns the robot's current power state. 1 for on, 0 for off.
  */
-uint8_t cm_robot_power_status();
+uint8_t cm_robot_power_status()
+{
+#ifdef MODE_EMBEDDED
+	if (RobotIsOn)
+		return 1;
+	else
+		return 0;
+#endif
+	// TODO: Figure out how to ask for this.
+#ifdef MODE_LOCAL
+	printf("RobotIsOn\n");
+	return readByte();
+#endif
+}
 
 /**
  * Waits for the specified length of time in milliseconds.
  */
-void cm_wait_ms(uint16_t &time);
-
+void cm_wait_ms(uint16_t &time)
+{
+#ifdef MODE_EMBEDDED
+	__timer_count = time;
+	__timer_on = 1;
+	while (__timer_on) ;
+#endif
+#ifdef MODE_LOCAL
+	// TODO: Figure out how to wait in a resolution of milliseconds
+#ifdef WINDOWS
+	Sleep(time);
+#else
+	usleep(time);
+#endif
+#endif
+}
 
 /*
  * Generally-useful functions that the main library of code uses to communicate with the robot
  */
 void sendByte(const uint8_t &value)
 {
-#ifdef EMBEDDED
+#ifdef MODE_EMBEDDED
 	while(!(UCSR0A & _BV(UDRE0))) ;
 	UDR0 = data;
-#else // Typically, LOCAL is defined if EMBEDDED isn't
+#else // Typically, MODE_LOCAL is defined if MODE_EMBEDDED isn't
 	printf("0x%02X", value);
 #endif	
 }
 
 void sendWord(const uint16_t &value)
 {
-#ifdef EMBEDDED
+#ifdef MODE_EMBEDDED
 	sendByte(0xff & (value >> 8));
 	sendByte(0xff & value);
-#else // Typically, LOCAL is defined if EMBEDDED isn't
+#else // Typically, MODE_LOCAL is defined if MODE_EMBEDDED isn't
 	printf("0x%04X", value);
 #endif
 }
 
 uint8_t readByte()
 {
-#ifdef EMBEDDED
+#ifdef MODE_EMBEDDED
 	while(!(UCSR0A & _BV(RXC0))) ;
 	return UDR0;
-#else // Typically, LOCAL is defined if EMBEDDED isn't
+#else // Typically, MODE_LOCAL is defined if MODE_EMBEDDED isn't
 	int value;
 	scanf("0x%x", &value);
 	return (uint8_t)(0xff & value);
@@ -618,28 +759,28 @@ uint8_t readByte()
 
 uint16_t readWord()
 {
-#ifdef EMBEDDED
+#ifdef MODE_EMBEDDED
 	return TO_UINT16(readByte(), readByte());
-#else // Typically, LOCAL is defined if EMBEDDED isn't
+#else // Typically, MODE_LOCAL is defined if MODE_EMBEDDED isn't
 	int value;
 	scanf("0x%x", &value);
 	return (uint16_t)(0xffff & value);
 #endif
 }
 
-// Used in LOCAL execution only, adds a space between codes so the repeater can translate
+// Used in MODE_LOCAL execution only, adds a space between codes so the repeater can translate
 //    the codes effectively.
 inline void padCommand()
 {
-#ifdef LOCAL
+#ifdef MODE_LOCAL
 	printf(" ");
 #endif
 }
 
-// Used in LOCAL execution only, adds a newline to the end of a command.
+// Used in MODE_LOCAL execution only, adds a newline to the end of a command.
 inline void endCommand()
 {
-#ifdef LOCAL
+#ifdef MODE_LOCAL
 	printf("\n");
 #endif
 }
@@ -647,7 +788,7 @@ inline void endCommand()
 /*
  * This is the main entry point for the embedded version:
  */
-#ifdef MODE_EMBEDDED
+#ifdef MODE_MODE_EMBEDDED
 int main(void)
 {
 	// Do init stuff here
@@ -687,22 +828,8 @@ SIGNAL(SIG_OUTPUT_COMPARE1A)
     __timer_on = 0;
 }
 
-void cm_wait_ms(uint16_t &time)
-{
-	__timer_count = time;
-	__timer_on = 1;
-	while (__timer_on) ;
-}
-
-uint8_t cm_robot_power_status()
-{
-	if (RobotIsOn)
-		return 1;
-	else
-		return 0;
-}
 #endif
-#ifdef MODE_LOCAL
+#ifdef MODE_MODE_LOCAL
 int main(void)
 {
 	// TODO: Configure a timer
@@ -710,26 +837,6 @@ int main(void)
 	
 	// Start the OI:
 	sendByte(CmdStart);
-}
-
-void cm_wait_ms(uint16_t &time)
-{
-	// TODO: Figure out how to wait for this.
-}
-
-uint8_t cm_robot_power_status()
-{
-#ifdef EMBEDDED
-	if (RobotIsOn)
-		return 1;
-	else
-		return 0;
-#endif
-	// TODO: Figure out how to ask for this.
-#ifdef LOCAL
-	printf("RobotIsOn\n");
-	return readByte();
-#endif
 }
 #endif
 
