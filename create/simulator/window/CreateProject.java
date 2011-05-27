@@ -88,7 +88,7 @@ public class CreateProject
 				CreateUtils.copyFile(FileNabber.FILE_HEADER_OI, header2);
 				
 				// Try to compile the files
-				String command = String.format("g++ -DMODE_LOCAL -o \"%s%s%s\" %s", localBinFolder.getPath(), File.separator, getProjectName(), FileNabber.FILE_MAIN);
+				String command = String.format("g++ -DMODE_LOCAL -o ..%s%s%s%s %s", File.separator, localBinFolder.getName(), File.separator, getProjectName(), FileNabber.FILE_MAIN);
 				System.out.println(command);
 				
 				Process compiler = runtime.exec(command, null, sourceFolder);

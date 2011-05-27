@@ -78,10 +78,10 @@ typedef unsigned short uint16_t;
 #define SEN_SET_6 6
 #define SEN_BUMP_DROP 7
 #define SEN_WALL 8
-#define SEN_LEFT_CLIFF 9
+#define SEN_FAR_LEFT_CLIFF 9
 #define SEN_FRONT_LEFT_CLIFF 10
 #define SEN_FRONT_RIGHT_CLIFF 11
-#define SEN_RIGHT_CLIFF 12
+#define SEN_FAR_RIGHT_CLIFF 12
 #define SEN_VIRTUAL_WALL 13
 #define SEN_OVERCURRENT 14
 #define SEN_UNUSED1 15
@@ -97,10 +97,10 @@ typedef unsigned short uint16_t;
 #define SEN_CHARGE 25
 #define SEN_CAPACITY 26
 #define SEN_WALL_SIGNAL 27
-#define SEN_LEFT_CLIFF_SIGNAL 28
+#define SEN_FAR_LEFT_CLIFF_SIGNAL 28
 #define SEN_FRONT_LEFT_CLIFF_SIGNAL 29
 #define SEN_FRONT_RIGHT_CLIFF_SIGNAL 30
-#define SEN_RIGHT_CLIFF_SIGNAL 31
+#define SEN_FAR_RIGHT_CLIFF_SIGNAL 31
 #define SEN_DIGITAL_INPUTS 32
 #define SEN_ANALOG_INPUTS 33
 #define SEN_AVAILABLE_CHARGE_SOURCES 34
@@ -182,14 +182,14 @@ void cm_passive_mode(void);
  * Tells the robot to play the specified demo.
  *   See the DEMO_* constants for more information.
  */
-void cm_play_demo(uint8_t demo);
+void cm_play_demo(const uint8_t &demo);
 
 /**
  * Set the rate of data transfer between the robot and the Command Module.
  * Not important for the most part.
  *   See the Baud* codes in oi.h for more information.
  */
-void cm_baud_rate(uint8_t baud);
+void cm_baud_rate(const uint8_t &baud);
 
 /**
  * Tells the robot to run the "Cover" demo.
@@ -215,17 +215,17 @@ void cm_demo_spot(void);
  * 	driving radius to the left.  Note that MAX_INT16 and MIN_INT16 have it
  *	drive as straight as possible, but it's still not entirely straight.
  */
-void cm_drive(int16_t speed, int16_t radius);
+void cm_drive(const int16_t &speed, const int16_t &radius);
 
 /**
  * Tells the robot to start driving by specifying the driving speed of each wheel.
  */
-void cm_direct_drive(int16_t right_speed, int16_t left_speed);
+void cm_direct_drive(const int16_t &right_speed, const int16_t &left_speed);
 
 /**
  * Convenience function to tell the robot to stop driving.
  */
-void cm_stop_driving();
+void cm_stop_driving(void);
 
 /**
  * Controls the LEDs on top of the robot.
@@ -234,7 +234,7 @@ void cm_stop_driving();
  *   @param power_color Sets the shade of the Power light between green (at 0) and orange (at 255).
  *   @param power_intensity Sets the brightness of the Power light from off (at 0) to full brightness (at 255).
  */
-void cm_set_leds(uint8_t play, uint8_t advance, uint8_t power_color, uint8_t power_intensity);
+void cm_set_leds(const uint8_t &play, const uint8_t &advance, const uint8_t &power_color, const uint8_t &power_intensity);
 
 /**
  * Sets the digital outputs on the Create's cargo bay connector.
@@ -242,22 +242,22 @@ void cm_set_leds(uint8_t play, uint8_t advance, uint8_t power_color, uint8_t pow
  * Note 1: Not used in simulations.
  * Note 2: Only available on Create robots. Does nothing on Roomba or Scooba robots.
  */
-void cm_digital_outputs(uint8_t pin0, uint8_t pin1, uint8_t pin2);
+void cm_digital_outputs(const uint8_t &pin0, const uint8_t &pin1, const uint8_t &pin2);
 
 /**
  * Sends the provided byte out over IR.
  */
-void cm_send_ir(uint8_t data);
+void cm_send_ir(const uint8_t &data);
 
 /**
  * Stores a song under the given number for later playback.
  */
-void cm_store_song(uint8_t song_number, uint8_t song_length, const uint8_t song_notes[], const uint8_t song_lengths[]);
+void cm_store_song(const uint8_t &song_number, const uint8_t &song_length, const uint8_t song_notes[], const uint8_t song_lengths[]);
 
 /**
  * Plays the song stored under the given number.
  */
-void cm_play_song(uint8_t song_number);
+void cm_play_song(const uint8_t &song_number);
 
 /* ************************* *
  * Sensor-reading functions: *
@@ -266,58 +266,58 @@ void cm_play_song(uint8_t song_number);
 /**
  * Returns 1 if the left bumper is pressed.
  */
-uint8_t cm_read_left_bumper();
+uint8_t cm_read_left_bumper(void);
 
 /**
  * Returns 1 if the right bumper is pressed.
  */
-uint8_t cm_read_right_bumper();
+uint8_t cm_read_right_bumper(void);
 
 /**
  * Returns 1 if the left wheel is dropped.
  */
-uint8_t cm_read_left_wheel_drop();
+uint8_t cm_read_left_wheel_drop(void);
 
 /**
  * Returns 1 if the right wheel is dropped.
  */
-uint8_t cm_read_right_wheel_drop();
+uint8_t cm_read_right_wheel_drop(void);
 
 /**
  * Returns 1 if the caster wheel is dropped.
  */
-uint8_t cm_read_caster_wheel_drop();
+uint8_t cm_read_caster_wheel_drop(void);
 
 /**
  * Returns 1 if the robot currently sees a wall on its right side.
  * Note: There is only one wall sensor on all iRobot robots.
  */
-uint8_t cm_read_wall();
+uint8_t cm_read_wall(void);
 
 /**
  * Returns 1 if the robot sees a cliff on its far left cliff sensor.
  */
-uint8_t cm_read_far_left_cliff();
+uint8_t cm_read_far_left_cliff(void);
 
 /**
  * Returns 1 if the robot sees a cliff on its front left cliff sensor.
  */
-uint8_t cm_read_front_left_cliff();
+uint8_t cm_read_front_left_cliff(void);
 
 /**
  * Returns 1 if the robot sees a cliff on its front right cliff sensor.
  */
-uint8_t cm_read_front_right_cliff();
+uint8_t cm_read_front_right_cliff(void);
 
 /**
  * Returns 1 if the robot sees a cliff on its far right cliff sensor.
  */
-uint8_t cm_read_far_right_cliff();
+uint8_t cm_read_far_right_cliff(void);
 
 /**
  * Returns 1 if the robot currently sees a virtual wall.
  */
-uint8_t cm_read_virtual_wall();
+uint8_t cm_read_virtual_wall(void);
 
 /*
 TODO: Implement something to deal with the "Low Side Driver and Wheel Overcurrents"
@@ -328,7 +328,7 @@ TODO: Implement something to deal with the "Low Side Driver and Wheel Overcurren
  * Reads the byte last received from the IR sensor.
  * See the REMOTE_* codes in the cm.h header.
  */
-uint8_t cm_read_ir();
+uint8_t cm_read_ir(void);
 
 /*
 TODO: Implement the "Buttons" sensor request. code #18. !important!
@@ -338,78 +338,78 @@ TODO: Implement the "Buttons" sensor request. code #18. !important!
  * Reads the distance the robot has moved since the last time it was asked.
  * Note: Units are in millimeters.
  */
-int16_t cm_read_distance();
+int16_t cm_read_distance(void);
 
 /**
  * Reads the angle the robot has turned since the last time it was asked.
  * Note: Units are in degrees, with positive values to the right and negative
  *   values to the left.
  */
-int16_t cm_read_angle();
+int16_t cm_read_angle(void);
 
 /**
  * Reads the battery's current charging state.
  * See the BATTERY_* codes in the cm.h header.
  */
-uint8_t cm_read_charging_state();
+uint8_t cm_read_charging_state(void);
 
 /**
  * Reads the battery's current voltage in millivolts.
  */
-uint16_t cm_read_battery_voltage();
+uint16_t cm_read_battery_voltage(void);
 
 /**
  * Reads the amount of current running into (positive values) or out of (negative values)
  *   the robot's battery.
  */
-int16_t cm_read_battery_current();
+int16_t cm_read_battery_current(void);
 
 /**
  * Reads the battery's current temperature in degrees Celsius.
  */
-int8_t cm_read_battery_temperature();
+int8_t cm_read_battery_temperature(void);
 
 /**
  * Reads the battery's current charge in milliamp-hours.
  * Note: This value is not accurate if the robot is running off Alkaline batteries.
  */
-uint16_t cm_read_battery_charge();
+uint16_t cm_read_battery_charge(void);
 
 /**
  * Reads the battery's estimated charge capacity in milliamp-hours.
  * Note: This value is not accurate if the robot is running off Alkaline batteries.
  */
-uint16_t cm_read_battery_capacity();
+uint16_t cm_read_battery_capacity(void);
 
 /**
  * Reads the strength of the wall sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_wall_signal();
+uint16_t cm_read_wall_signal(void);
 
 /**
  * Reads the strength of the far left cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_left_cliff_signal();
+uint16_t cm_read_left_cliff_signal(void);
 
 /**
  * Reads the strength of the front left cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_front_left_cliff_signal();
+uint16_t cm_read_front_left_cliff_signal(void);
 
 /**
  * Reads the strength of the front right cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_front_right_cliff_signal();
+uint16_t cm_read_front_right_cliff_signal(void);
 
 /**
  * Reads the strength of the far right cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_right_cliff_signal();
+uint16_t cm_read_right_cliff_signal(void);
 
 /*
 TODO: Implement the "Cargo Bay Digital Inputs" sensor request. code #32, formatted byte.
@@ -423,58 +423,58 @@ TODO: Implement the "Charging Sources Available" sensor request. code #34, forma
  * Reads the current Open Interface mode.
  * See the OI_MODE_* codes in the cm.h header.
  */
-uint8_t cm_read_oi_mode();
+uint8_t cm_read_oi_mode(void);
 
 /**
  * Reads the number of the currently-playing song.
  * Range is 0-15.
  */
-uint8_t cm_read_current_song_number();
+uint8_t cm_read_current_song_number(void);
 
 /**
  * Returns 1 if there is a song currently playing.
  */
-uint8_t cm_read_is_song_playing();
+uint8_t cm_read_is_song_playing(void);
 
 /**
  * Returns the last-requested speed.
  * Range is -500 to 500, units are in millimeters per second.
  */
-uint16_t cm_read_requested_speed();
+uint16_t cm_read_requested_speed(void);
 
 /**
  * Returns the last-requested radius.
  * Range is -32768 to 32767, units are in millimeters.
  */
-uint16_t cm_read_requested_radius();
+uint16_t cm_read_requested_radius(void);
 
 /**
  * Returns the last-requested speed for the right wheel.
  * Range is -500 to 500, in millimeters per second.
  */
-uint16_t cm_read_requested_right_speed();
+uint16_t cm_read_requested_right_speed(void);
 
 /**
  * Returns the last-requested speed for the left wheel.
  * Range is -500 to 500, in millimeters per second.
  */
-uint16_t cm_read_requested_left_speed();
+uint16_t cm_read_requested_left_speed(void);
 
 /**
  * Returns the robot's current power state. 1 for on, 0 for off.
  */
-uint8_t cm_robot_power_status();
+uint8_t cm_robot_power_status(void);
 
 /**
  * Waits for the specified length of time in milliseconds.
  */
-void cm_wait_ms(uint16_t &time);
+void cm_wait_ms(const uint16_t &time);
 
 /* ************************************************ *
  * Functions intended to be private to this module: *
  * ************************************************ */
 void sendByte(const uint8_t &value);
 void sendWord(const uint16_t &value);
-uint8_t readByte();
-uint16_t readWord();
+uint8_t readByte(void);
+uint16_t readWord(void);
 

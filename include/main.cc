@@ -89,7 +89,7 @@ void cm_passive_mode(void)
  * Tells the robot to play the specified demo.
  *   See the DEMO_* constants for more information.
  */
-void cm_play_demo(uint8_t demo)
+void cm_play_demo(const uint8_t &demo)
 {
 	sendByte(CmdDemo);
 	padCommand();
@@ -102,15 +102,15 @@ void cm_play_demo(uint8_t demo)
  * Not important for the most part.
  *   See the Baud* codes in oi.h for more information.
  */
-void cm_baud_rate(uint8_t baud)
+void cm_baud_rate(const uint8_t &baud)
 {
-	if(baud_code <= 11)
+	if(baud <= 11)
 	{
 		sendByte(CmdBaud);
 #ifdef MODE_EMBEDDED
 		UCSR0A |= _BV(TXC0);
 #endif
-		sendByte(baud_code);
+		sendByte(baud);
 #ifdef MODE_EMBEDDED
 		// Wait until transmit is complete
 		while(!(UCSR0A & _BV(TXC0))) ;
@@ -118,18 +118,56 @@ void cm_baud_rate(uint8_t baud)
 		cli();
 		
 		// Switch the baud rate register
-		if (baud_code == Baud115200)      UBRR0 = Ubrr115200;
-		else if (baud_code == Baud57600) UBRR0 = Ubrr57600;
-		else if (baud_code == Baud38400) UBRR0 = Ubrr38400;
-		else if (baud_code == Baud28800) UBRR0 = Ubrr28800;
-		else if (baud_code == Baud19200) UBRR0 = Ubrr19200;
-		else if (baud_code == Baud14400) UBRR0 = Ubrr14400;
-		else if (baud_code == Baud9600)  UBRR0 = Ubrr9600;
-		else if (baud_code == Baud4800)  UBRR0 = Ubrr4800;
-		else if (baud_code == Baud2400)  UBRR0 = Ubrr2400;
-		else if (baud_code == Baud1200)  UBRR0 = Ubrr1200;
-		else if (baud_code == Baud600)   UBRR0 = Ubrr600;
-		else if (baud_code == Baud300)   UBRR0 = Ubrr300;
+		switch (code)
+		{
+			case Baud115200:
+				UBRR0 = Ubrr115200;
+				break;
+			
+			case Baud57600:
+				UBRR0 = Ubrr57600;
+				break;
+			
+			case Baud38400:
+				UBRR0 = Ubrr38400;
+				break;
+			
+			case Baud28800:
+				UBRR0 = Ubrr28800;
+				break;
+			
+			case Baud19200:
+				UBRR0 = Ubrr19200;
+				break;
+			
+			case Baud14400:
+				UBRR0 = Ubrr14400;
+				break;
+			
+			case Baud9600:
+				UBRR0 = Ubrr9600;
+				break;
+			
+			case Baud4800:
+				UBRR0 = Ubrr4800;
+				break;
+			
+			case Baud2400:
+				UBRR0 = Ubrr2400;
+				break;
+			
+			case Baud1200:
+				UBRR0 = Ubrr1200;
+				break;
+			
+			case Baud600:
+				UBRR0 = Ubrr600;
+				break;
+			
+			case Baud300:
+				UBRR0 = Ubrr300;
+				break;
+		}
 		
 		sei();
 		
@@ -174,7 +212,7 @@ void cm_demo_spot(void)
  * 	driving radius to the left.  Note that MAX_INT16 and MIN_INT16 have it
  *	drive as straight as possible, but it's still not entirely straight.
  */
-void cm_drive(int16_t speed, int16_t radius)
+void cm_drive(const int16_t &speed, const int16_t &radius)
 {
 	sendByte(CmdDrive);
 	padCommand();
@@ -187,7 +225,7 @@ void cm_drive(int16_t speed, int16_t radius)
 /**
  * Tells the robot to start driving by specifying the driving speed of each wheel.
  */
-void cm_direct_drive(int16_t right_speed, int16_t left_speed)
+void cm_direct_drive(const int16_t &right_speed, const int16_t &left_speed)
 {
 	sendByte(CmdDriveWheels);
 	padCommand();
@@ -200,7 +238,7 @@ void cm_direct_drive(int16_t right_speed, int16_t left_speed)
 /**
  * Convenience function to tell the robot to stop driving.
  */
-void cm_stop_driving()
+void cm_stop_driving(void)
 {
 	cm_direct_drive(0, 0);
 }
@@ -212,7 +250,7 @@ void cm_stop_driving()
  *   @param power_color Sets the shade of the Power light between green (at 0) and orange (at 255).
  *   @param power_intensity Sets the brightness of the Power light from off (at 0) to full brightness (at 255).
  */
-void cm_set_leds(uint8_t play, uint8_t advance, uint8_t power_color, uint8_t power_intensity)
+void cm_set_leds(const uint8_t &play, const uint8_t &advance, const uint8_t &power_color, const uint8_t &power_intensity)
 {
 	uint8_t b = 0;
 	if (play)		b |= LEDPlay;
@@ -234,7 +272,7 @@ void cm_set_leds(uint8_t play, uint8_t advance, uint8_t power_color, uint8_t pow
  * Note 1: Not used in simulations.
  * Note 2: Only available on Create robots. Does nothing on Roomba or Scooba robots.
  */
-void cm_digital_outputs(uint8_t pin0, uint8_t pin1, uint8_t pin2)
+void cm_digital_outputs(const uint8_t &pin0, const uint8_t &pin1, const uint8_t &pin2)
 {
 	uint8_t b = 0;
 	if (pin0)	b |= 0x01;
@@ -250,7 +288,7 @@ void cm_digital_outputs(uint8_t pin0, uint8_t pin1, uint8_t pin2)
 /**
  * Sends the provided byte out over IR.
  */
-void cm_send_ir(uint8_t data)
+void cm_send_ir(const uint8_t &data)
 {
 	sendByte(CmdIRChar);
 	padCommand();
@@ -261,7 +299,7 @@ void cm_send_ir(uint8_t data)
 /**
  * Stores a song under the given number for later playback.
  */
-void cm_store_song(uint8_t song_number, uint8_t song_length, const uint8_t song_notes[], const uint8_t song_lengths[])
+void cm_store_song(const uint8_t &song_number, const uint8_t &song_length, const uint8_t song_notes[], const uint8_t song_lengths[])
 {
 	sendByte(CmdSong);
 	padCommand();
@@ -272,9 +310,9 @@ void cm_store_song(uint8_t song_number, uint8_t song_length, const uint8_t song_
 	for (uint8_t i=0; i < song_length; i++)
 	{
 		padCommand();
-		cm_send_byte(song_notes[i]);
+		sendByte(song_notes[i]);
 		padCommand();
-		cm_send_byte(song_lengths[i]);
+		sendByte(song_lengths[i]);
 	}
 	endCommand();
 }
@@ -282,7 +320,7 @@ void cm_store_song(uint8_t song_number, uint8_t song_length, const uint8_t song_
 /**
  * Plays the song stored under the given number.
  */
-void cm_play_song(uint8_t song_number)
+void cm_play_song(const uint8_t &song_number)
 {
 	sendByte(CmdPlay);
 	padCommand();
@@ -297,9 +335,9 @@ void cm_play_song(uint8_t song_number)
 /**
  * Returns 1 if the left bumper is pressed.
  */
-uint8_t cm_read_left_bumper()
+uint8_t cm_read_left_bumper(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_BUMP_DROP);
 	endCommand();
@@ -313,9 +351,9 @@ uint8_t cm_read_left_bumper()
 /**
  * Returns 1 if the right bumper is pressed.
  */
-uint8_t cm_read_right_bumper()
+uint8_t cm_read_right_bumper(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_BUMP_DROP);
 	endCommand();
@@ -329,9 +367,9 @@ uint8_t cm_read_right_bumper()
 /**
  * Returns 1 if the left wheel is dropped.
  */
-uint8_t cm_read_left_wheel_drop()
+uint8_t cm_read_left_wheel_drop(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_BUMP_DROP);
 	endCommand();
@@ -345,9 +383,9 @@ uint8_t cm_read_left_wheel_drop()
 /**
  * Returns 1 if the right wheel is dropped.
  */
-uint8_t cm_read_right_wheel_drop()
+uint8_t cm_read_right_wheel_drop(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_BUMP_DROP);
 	endCommand();
@@ -361,9 +399,9 @@ uint8_t cm_read_right_wheel_drop()
 /**
  * Returns 1 if the caster wheel is dropped.
  */
-uint8_t cm_read_caster_wheel_drop()
+uint8_t cm_read_caster_wheel_drop(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_BUMP_DROP);
 	endCommand();
@@ -378,9 +416,9 @@ uint8_t cm_read_caster_wheel_drop()
  * Returns 1 if the robot currently sees a wall on its right side.
  * Note: There is only one wall sensor on all iRobot robots.
  */
-uint8_t cm_read_wall()
+uint8_t cm_read_wall(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_WALL);
 	endCommand();
@@ -391,11 +429,11 @@ uint8_t cm_read_wall()
 /**
  * Returns 1 if the robot sees a cliff on its far left cliff sensor.
  */
-uint8_t cm_read_far_left_cliff()
+uint8_t cm_read_far_left_cliff(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
-	sendByte(SEN_CLIFF_LEFT);
+	sendByte(SEN_FAR_LEFT_CLIFF);
 	endCommand();
 	
 	return readByte();
@@ -404,11 +442,11 @@ uint8_t cm_read_far_left_cliff()
 /**
  * Returns 1 if the robot sees a cliff on its front left cliff sensor.
  */
-uint8_t cm_read_front_left_cliff()
+uint8_t cm_read_front_left_cliff(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
-	sendByte(SEN_CLIFF_FRONT_LEFT);
+	sendByte(SEN_FRONT_LEFT_CLIFF);
 	endCommand();
 	
 	return readByte();
@@ -417,11 +455,11 @@ uint8_t cm_read_front_left_cliff()
 /**
  * Returns 1 if the robot sees a cliff on its front right cliff sensor.
  */
-uint8_t cm_read_front_right_cliff()
+uint8_t cm_read_front_right_cliff(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
-	sendByte(SEN_CLIFF_FRONT_RIGHT);
+	sendByte(SEN_FRONT_RIGHT_CLIFF);
 	endCommand();
 	
 	return readByte();
@@ -430,11 +468,11 @@ uint8_t cm_read_front_right_cliff()
 /**
  * Returns 1 if the robot sees a cliff on its far right cliff sensor.
  */
-uint8_t cm_read_far_right_cliff()
+uint8_t cm_read_far_right_cliff(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
-	sendByte(SEN_CLIFF_RIGHT);
+	sendByte(SEN_FAR_RIGHT_CLIFF);
 	endCommand();
 	
 	return readByte();
@@ -443,9 +481,9 @@ uint8_t cm_read_far_right_cliff()
 /**
  * Returns 1 if the robot currently sees a virtual wall.
  */
-uint8_t cm_read_virtual_wall()
+uint8_t cm_read_virtual_wall(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_VIRTUAL_WALL);
 	endCommand();
@@ -462,9 +500,9 @@ TODO: Implement something to deal with the "Low Side Driver and Wheel Overcurren
  * Reads the byte last received from the IR sensor.
  * See the REMOTE_* codes in the cm.h header.
  */
-uint8_t cm_read_ir()
+uint8_t cm_read_ir(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_IR_CODE);
 	endCommand();
@@ -480,9 +518,9 @@ TODO: Implement the "Buttons" sensor request. code #18.
  * Reads the distance the robot has moved since the last time it was asked.
  * Note: Units are in millimeters.
  */
-int16_t cm_read_distance()
+int16_t cm_read_distance(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_DISTANCE);
 	endCommand();
@@ -495,23 +533,23 @@ int16_t cm_read_distance()
  * Note: Units are in degrees, with positive values to the right and negative
  *   values to the left.
  */
-int16_t cm_read_angle()
+int16_t cm_read_angle(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_ANGLE);
 	endCommand();
 	
 	return readWord();
-}}
+}
 
 /**
  * Reads the battery's current charging state.
  * See the BATTERY_* codes in the cm.h header.
  */
-uint8_t cm_read_charging_state()
+uint8_t cm_read_charging_state(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_CHARGE_STATE);
 	endCommand();
@@ -522,9 +560,9 @@ uint8_t cm_read_charging_state()
 /**
  * Reads the battery's current voltage in millivolts.
  */
-uint16_t cm_read_battery_voltage()
+uint16_t cm_read_battery_voltage(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_VOLTAGE);
 	endCommand();
@@ -536,9 +574,9 @@ uint16_t cm_read_battery_voltage()
  * Reads the amount of current running into (positive values) or out of (negative values)
  *   the robot's battery.
  */
-int16_t cm_read_battery_current()
+int16_t cm_read_battery_current(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_CURRENT);
 	endCommand();
@@ -549,9 +587,9 @@ int16_t cm_read_battery_current()
 /**
  * Reads the battery's current temperature in degrees Celsius.
  */
-int8_t cm_read_battery_temperature()
+int8_t cm_read_battery_temperature(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_TEMPERATURE);
 	endCommand();
@@ -563,9 +601,9 @@ int8_t cm_read_battery_temperature()
  * Reads the battery's current charge in milliamp-hours.
  * Note: This value is not accurate if the robot is running off Alkaline batteries.
  */
-uint16_t cm_read_battery_charge()
+uint16_t cm_read_battery_charge(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_CHARGE);
 	endCommand();
@@ -577,9 +615,9 @@ uint16_t cm_read_battery_charge()
  * Reads the battery's estimated charge capacity in milliamp-hours.
  * Note: This value is not accurate if the robot is running off Alkaline batteries.
  */
-uint16_t cm_read_battery_capacity()
+uint16_t cm_read_battery_capacity(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_CAPACITY);
 	endCommand();
@@ -591,9 +629,9 @@ uint16_t cm_read_battery_capacity()
  * Reads the strength of the wall sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_wall_signal()
+uint16_t cm_read_wall_signal(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_WALL_SIGNAL);
 	endCommand();
@@ -605,11 +643,11 @@ uint16_t cm_read_wall_signal()
  * Reads the strength of the far left cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_left_cliff_signal()
+uint16_t cm_read_left_cliff_signal(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
-	sendByte(SEN_LEFT_CLIFF_SIGNAL);
+	sendByte(SEN_FAR_LEFT_CLIFF_SIGNAL);
 	endCommand();
 	
 	return readWord();
@@ -619,9 +657,9 @@ uint16_t cm_read_left_cliff_signal()
  * Reads the strength of the front left cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_front_left_cliff_signal()
+uint16_t cm_read_front_left_cliff_signal(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_FRONT_LEFT_CLIFF_SIGNAL);
 	endCommand();
@@ -633,9 +671,9 @@ uint16_t cm_read_front_left_cliff_signal()
  * Reads the strength of the front right cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_front_right_cliff_signal()
+uint16_t cm_read_front_right_cliff_signal(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_FRONT_RIGHT_CLIFF_SIGNAL);
 	endCommand();
@@ -647,11 +685,11 @@ uint16_t cm_read_front_right_cliff_signal()
  * Reads the strength of the far right cliff sensor's signal.
  * The range is 0 to 4095.
  */
-uint16_t cm_read_right_cliff_signal()
+uint16_t cm_read_right_cliff_signal(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
-	sendByte(SEN_RIGHT_CLIFF_SIGNAL);
+	sendByte(SEN_FAR_RIGHT_CLIFF_SIGNAL);
 	endCommand();
 	
 	return readWord();
@@ -669,9 +707,9 @@ TODO: Implement the "Charging Sources Available" sensor request. code #34, forma
  * Reads the current Open Interface mode.
  * See the OI_MODE_* codes in the cm.h header.
  */
-uint8_t cm_read_oi_mode()
+uint8_t cm_read_oi_mode(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_OI_MODE);
 	endCommand();
@@ -683,9 +721,9 @@ uint8_t cm_read_oi_mode()
  * Reads the number of the currently-playing song.
  * Range is 0-15.
  */
-uint8_t cm_read_current_song_number()
+uint8_t cm_read_current_song_number(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_SONG_NUMBER);
 	endCommand();
@@ -696,9 +734,9 @@ uint8_t cm_read_current_song_number()
 /**
  * Returns 1 if there is a song currently playing.
  */
-uint8_t cm_read_is_song_playing()
+uint8_t cm_read_is_song_playing(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_SONG_PLAYING);
 	endCommand();
@@ -710,9 +748,9 @@ uint8_t cm_read_is_song_playing()
  * Returns the last-requested speed.
  * Range is -500 to 500, units are in millimeters per second.
  */
-uint16_t cm_read_requested_speed()
+uint16_t cm_read_requested_speed(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_SPEED);
 	endCommand();
@@ -724,9 +762,9 @@ uint16_t cm_read_requested_speed()
  * Returns the last-requested radius.
  * Range is -32768 to 32767, units are in millimeters.
  */
-uint16_t cm_read_requested_radius()
+uint16_t cm_read_requested_radius(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_RADIUS);
 	endCommand();
@@ -738,9 +776,9 @@ uint16_t cm_read_requested_radius()
  * Returns the last-requested speed for the right wheel.
  * Range is -500 to 500, in millimeters per second.
  */
-uint16_t cm_read_requested_right_speed()
+uint16_t cm_read_requested_right_speed(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_RIGHT_WHEEL_SPEED);
 	endCommand();
@@ -752,9 +790,9 @@ uint16_t cm_read_requested_right_speed()
  * Returns the last-requested speed for the left wheel.
  * Range is -500 to 500, in millimeters per second.
  */
-uint16_t cm_read_requested_left_speed()
+uint16_t cm_read_requested_left_speed(void)
 {
-	sendByte(CmdSensor);
+	sendByte(CmdSensors);
 	padCommand();
 	sendByte(SEN_LEFT_WHEEL_SPEED);
 	endCommand();
@@ -765,7 +803,7 @@ uint16_t cm_read_requested_left_speed()
 /**
  * Returns the robot's current power state. 1 for on, 0 for off.
  */
-uint8_t cm_robot_power_status()
+uint8_t cm_robot_power_status(void)
 {
 #ifdef MODE_EMBEDDED
 	if (RobotIsOn)
@@ -783,7 +821,7 @@ uint8_t cm_robot_power_status()
 /**
  * Waits for the specified length of time in milliseconds.
  */
-void cm_wait_ms(uint16_t &time)
+void cm_wait_ms(const uint16_t &time)
 {
 #ifdef MODE_EMBEDDED
 	__timer_count = time;
@@ -823,7 +861,7 @@ void sendWord(const uint16_t &value)
 #endif
 }
 
-uint8_t readByte()
+uint8_t readByte(void)
 {
 #ifdef MODE_EMBEDDED
 	while(!(UCSR0A & _BV(RXC0))) ;
@@ -835,7 +873,7 @@ uint8_t readByte()
 #endif	
 }
 
-uint16_t readWord()
+uint16_t readWord(void)
 {
 #ifdef MODE_EMBEDDED
 	return TO_UINT16(readByte(), readByte());
@@ -848,7 +886,7 @@ uint16_t readWord()
 
 // Used in MODE_LOCAL execution only, adds a space between codes so the repeater can translate
 //    the codes effectively.
-void padCommand()
+void padCommand(void)
 {
 #ifdef MODE_LOCAL
 	printf(" ");
@@ -856,7 +894,7 @@ void padCommand()
 }
 
 // Used in MODE_LOCAL execution only, adds a newline to the end of a command.
-void endCommand()
+void endCommand(void)
 {
 #ifdef MODE_LOCAL
 	printf("\n");
@@ -866,7 +904,7 @@ void endCommand()
 /*
  * This is the main entry point for the embedded version:
  */
-#ifdef MODE_MODE_EMBEDDED
+#ifdef MODE_EMBEDDED
 int main(void)
 {
 	// Do init stuff here
@@ -907,7 +945,7 @@ SIGNAL(SIG_OUTPUT_COMPARE1A)
 }
 
 #endif
-#ifdef MODE_MODE_LOCAL
+#ifdef MODE_LOCAL
 int main(void)
 {
 	// TODO: Configure a timer

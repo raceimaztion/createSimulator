@@ -400,6 +400,15 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		else if (command.equals(COMMAND_RUN_SERIAL))
 		{
 			// Run -> Run serial control...
+			BuildProblem problem = project.buildSimulatorProject();
+			if (problem == null)
+			{
+				JOptionPane.showMessageDialog(window, "Compile completed successfully.", "Create Simulator", JOptionPane.INFORMATION_MESSAGE);
+			}
+			else
+			{
+				buildProblemDialog.showMessage(problem);
+			}
 		}
 		else if (command.equals(COMMAND_RUN_SIMULATOR))
 		{
