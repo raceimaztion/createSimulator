@@ -1,13 +1,16 @@
 // main.cc
 
-#include "cm.h"
+//#include "cm.h"
 
 // For waiting in milliseconds
 #ifdef WINDOW
 #include <Winbase.h>
 #else
-#include <unintst.h>
+#include <unistd.h>
 #endif
+
+void padCommand();
+void endCommand();
 
 /*
  * This is the main library source file for the Create Simulator.
@@ -291,10 +294,85 @@ void cm_play_song(uint8_t song_number)
  * Sensor-reading functions: *
  * ************************* */
 
-/*
-TODO: Implement the "Bumps and Wheel Drops" sensor request. code #7. formatted byte.
-*/
+/**
+ * Returns 1 if the left bumper is pressed.
+ */
+uint8_t cm_read_left_bumper()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_BUMP_DROP);
+	endCommand();
+	
+	if (readByte() & 0x02)
+		return 1;
+	else
+		return 0;
+}
 
+/**
+ * Returns 1 if the right bumper is pressed.
+ */
+uint8_t cm_read_right_bumper()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_BUMP_DROP);
+	endCommand();
+	
+	if (readByte() & 0x01)
+		return 1;
+	else
+		return 0;
+}
+
+/**
+ * Returns 1 if the left wheel is dropped.
+ */
+uint8_t cm_read_left_wheel_drop()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_BUMP_DROP);
+	endCommand();
+	
+	if (readByte() & 0x08)
+		return 1;
+	else
+		return 0;
+}
+
+/**
+ * Returns 1 if the right wheel is dropped.
+ */
+uint8_t cm_read_right_wheel_drop()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_BUMP_DROP);
+	endCommand();
+	
+	if (readByte() & 0x04)
+		return 1;
+	else
+		return 0;
+}
+
+/**
+ * Returns 1 if the caster wheel is dropped.
+ */
+uint8_t cm_read_caster_wheel_drop()
+{
+	sendByte(CmdSensor);
+	padCommand();
+	sendByte(SEN_BUMP_DROP);
+	endCommand();
+	
+	if (readByte() & 0x10)
+		return 1;
+	else
+		return 0;
+}
 
 /**
  * Returns 1 if the robot currently sees a wall on its right side.
@@ -313,7 +391,7 @@ uint8_t cm_read_wall()
 /**
  * Returns 1 if the robot sees a cliff on its far left cliff sensor.
  */
-uint8_t cm_read_left_cliff()
+uint8_t cm_read_far_left_cliff()
 {
 	sendByte(CmdSensor);
 	padCommand();
@@ -352,7 +430,7 @@ uint8_t cm_read_front_right_cliff()
 /**
  * Returns 1 if the robot sees a cliff on its far right cliff sensor.
  */
-uint8_t cm_read_right_cliff()
+uint8_t cm_read_far_right_cliff()
 {
 	sendByte(CmdSensor);
 	padCommand();
@@ -770,7 +848,7 @@ uint16_t readWord()
 
 // Used in MODE_LOCAL execution only, adds a space between codes so the repeater can translate
 //    the codes effectively.
-inline void padCommand()
+void padCommand()
 {
 #ifdef MODE_LOCAL
 	printf(" ");
@@ -778,7 +856,7 @@ inline void padCommand()
 }
 
 // Used in MODE_LOCAL execution only, adds a newline to the end of a command.
-inline void endCommand()
+void endCommand()
 {
 #ifdef MODE_LOCAL
 	printf("\n");

@@ -20,6 +20,9 @@
 // If we're compiling for local execution, include some standard C libraries
 #ifdef MODE_LOCAL
 #include <stdio.h>
+
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
 #endif
 
 // Roomba IR codes:
@@ -260,9 +263,30 @@ void cm_play_song(uint8_t song_number);
  * Sensor-reading functions: *
  * ************************* */
 
-/*
-TODO: Implement the "Bumps and Wheel Drops" sensor request. code #7. formatted byte.
-*/
+/**
+ * Returns 1 if the left bumper is pressed.
+ */
+uint8_t cm_read_left_bumper();
+
+/**
+ * Returns 1 if the right bumper is pressed.
+ */
+uint8_t cm_read_right_bumper();
+
+/**
+ * Returns 1 if the left wheel is dropped.
+ */
+uint8_t cm_read_left_wheel_drop();
+
+/**
+ * Returns 1 if the right wheel is dropped.
+ */
+uint8_t cm_read_right_wheel_drop();
+
+/**
+ * Returns 1 if the caster wheel is dropped.
+ */
+uint8_t cm_read_caster_wheel_drop();
 
 /**
  * Returns 1 if the robot currently sees a wall on its right side.
@@ -273,7 +297,7 @@ uint8_t cm_read_wall();
 /**
  * Returns 1 if the robot sees a cliff on its far left cliff sensor.
  */
-uint8_t cm_read_left_cliff();
+uint8_t cm_read_far_left_cliff();
 
 /**
  * Returns 1 if the robot sees a cliff on its front left cliff sensor.
@@ -288,7 +312,7 @@ uint8_t cm_read_front_right_cliff();
 /**
  * Returns 1 if the robot sees a cliff on its far right cliff sensor.
  */
-uint8_t cm_read_right_cliff();
+uint8_t cm_read_far_right_cliff();
 
 /**
  * Returns 1 if the robot currently sees a virtual wall.

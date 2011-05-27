@@ -1,6 +1,8 @@
 package create.simulator.utils;
 
 import create.simulator.icons.*;
+import include.FileNabber;
+
 import java.io.*;
 import javax.swing.*;
 
@@ -53,5 +55,45 @@ public class CreateUtils
 	public static Icon loadIcon(String name)
 	{
 		return IconLoader.getIcon(name);
+	}
+	
+	/**
+	 * Copies a file from the given file name to an open PrintStream.
+	 * @param source The name of the source file to read from.
+	 * @param dest The stream to write the file to.
+	 * @throws IOException If there's an error, pass it along.
+	 */
+	public static void copyFile(String source, PrintStream dest) throws IOException
+	{
+		BufferedReader in = new BufferedReader(new InputStreamReader(FileNabber.getFile(source)));
+		
+		String line;
+		while ((line = in.readLine()) != null)
+		{
+			dest.println(line);
+		}
+		
+		in.close();
+	}
+	
+	/**
+	 * Copies a file from the given file name to the given File.
+	 * @param source The name of the source file to read from.
+	 * @param dest The File to write the data to.
+	 * @throws IOException If there's an error, pass it along.
+	 */
+	public static void copyFile(String source, File dest) throws IOException
+	{
+		BufferedReader in = new BufferedReader(new InputStreamReader(FileNabber.getFile(source)));
+		PrintWriter out = new PrintWriter(new FileWriter(dest));
+		
+		String line;
+		while ((line = in.readLine()) != null)
+		{
+			out.println(line);
+		}
+		
+		in.close();
+		out.close();
 	}
 }

@@ -1,5 +1,7 @@
 package create.simulator.window;
 
+import include.FileNabber;
+
 import java.io.*;
 import java.util.*;
 
@@ -54,28 +56,48 @@ public class CreateProject
 		// If we're running Linux, try compiling with GCC:
 		if (MainLauncher.getRuntimePlatform() == Platform.LINUX)
 		{
+			File mainSource = null;
+			File header1 = null, header2 = null;
+			
 			// Try compiling the project under Linux using GCC:
 			try
 			{
 				Runtime runtime = Runtime.getRuntime();
 				
 				// Copy the source library into the project folder
+				String[] modules = getModuleNames();
 				
-				// Compile the source
+				mainSource = new File(sourceFolder, FileNabber.FILE_MAIN);
+				header1 = new File(sourceFolder, FileNabber.FILE_HEADER_CM);
+				header2 = new File(sourceFolder, FileNabber.FILE_HEADER_OI);
 				
-				// Remove the source library 
-				
-				// gcc -o "{$localBinFolder}/{$projectName}" {list of all source files}
-				String command = String.format("gcc -o \"%s/%s\"", localBinFolder.getPath(), getProjectName());
-				for (String module : getModuleNames())
+				// Copy the main file,
+				PrintStream main = new PrintStream(new FileOutputStream(mainSource));
+				main.println("#include \"cm.h\"");
+				for (String module : modules)
 				{
-					command += String.format(" %s", module);
+					main.printf("#include \"%s\"\n", module);
+					System.out.println(module);
 				}
+				CreateUtils.copyFile(FileNabber.FILE_MAIN, main);
+				main.flush();
+				main.close();
+				
+				// Copy the headers.
+				CreateUtils.copyFile(FileNabber.FILE_HEADER_CM, header1);
+				CreateUtils.copyFile(FileNabber.FILE_HEADER_OI, header2);
+				
+				// Try to compile the files
+				String command = String.format("g++ -DMODE_LOCAL -o \"%s%s%s\" %s", localBinFolder.getPath(), File.separator, getProjectName(), FileNabber.FILE_MAIN);
+				System.out.println(command);
 				
 				Process compiler = runtime.exec(command, null, sourceFolder);
 				InputStream stdIn = compiler.getInputStream();
 				InputStream errIn = compiler.getErrorStream();
-				int result = compiler.waitFor();
+				Integer result = null;
+				try {
+					result = compiler.waitFor();
+				} catch (InterruptedException er) { }
 				
 				if (result == 0)
 				{
@@ -90,13 +112,16 @@ public class CreateProject
 			}
 			catch (IOException er)
 			{
-				
+				return new BuildProblem(this, "File I/O error.", er.getMessage(), -2);
 			}
-			catch (InterruptedException er)
+			finally
 			{
-				
+				// Delete the files we added:
+				if (mainSource != null) mainSource.delete();
+				if (header1 != null) header1.delete();
+				if (header2 != null) header2.delete();
 			}
-			return new BuildProblem(this, "Compiler failed.", "Unhandled error ocurred.", -1);
+//			return new BuildProblem(this, "Compiler failed.", "Unhandled error ocurred.", -1);
 		}
 		else
 		{
