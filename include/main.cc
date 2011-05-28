@@ -3,10 +3,17 @@
 //#include "cm.h"
 
 // For waiting in milliseconds
+#ifdef MODE_LOCAL
 #ifdef WINDOW
 #include <Winbase.h>
 #else
 #include <unistd.h>
+#endif
+#endif
+
+#ifdef MODE_EMBEDDED
+volatile uint16_t __timer_count = 0;
+volatile uint8_t __timer_running = 0;
 #endif
 
 void padCommand();
@@ -118,7 +125,7 @@ void cm_baud_rate(const uint8_t &baud)
 		cli();
 		
 		// Switch the baud rate register
-		switch (code)
+		switch (baud)
 		{
 			case Baud115200:
 				UBRR0 = Ubrr115200;
@@ -825,8 +832,8 @@ void cm_wait_ms(const uint16_t &time)
 {
 #ifdef MODE_EMBEDDED
 	__timer_count = time;
-	__timer_on = 1;
-	while (__timer_on) ;
+	__timer_running = 1;
+	while (__timer_running) ;
 #endif
 #ifdef MODE_LOCAL
 	// TODO: Figure out how to wait in a resolution of milliseconds
@@ -845,7 +852,7 @@ void sendByte(const uint8_t &value)
 {
 #ifdef MODE_EMBEDDED
 	while(!(UCSR0A & _BV(UDRE0))) ;
-	UDR0 = data;
+	UDR0 = value;
 #else // Typically, MODE_LOCAL is defined if MODE_EMBEDDED isn't
 	printf("0x%02X", value);
 #endif	
@@ -931,9 +938,6 @@ int main(void)
 	sendByte(CmdStart);
 }
 
-volatile uint16_t __timer_count = 0;
-volatile uint8_t __timer_running = 0;
-
 // This is the timer callback
 // Timer 1 interrupt times delays in ms
 SIGNAL(SIG_OUTPUT_COMPARE1A)
@@ -941,7 +945,7 @@ SIGNAL(SIG_OUTPUT_COMPARE1A)
   if (__timer_count)
     __timer_count --;
   else
-    __timer_on = 0;
+    __timer_running = 0;
 }
 
 #endif

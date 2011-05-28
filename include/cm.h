@@ -21,9 +21,12 @@
 #ifdef MODE_LOCAL
 #include <stdio.h>
 
-typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
+typedef signed short int16_t;
 #endif
+
+typedef unsigned char uint8_t;
+typedef signed char int8_t;
 
 // Roomba IR codes:
 // Remote codes

@@ -27,7 +27,7 @@ public class RobotRepeater
 	protected BufferedInputStream realIn;
 	protected OutputStream realOut;
 	
-	public RobotRepeater(Process master)
+	private RobotRepeater(Process master)
 	{
 		masterProcess = master;
 		
@@ -36,6 +36,11 @@ public class RobotRepeater
 		coreOut = new PrintStream(master.getOutputStream());
 	}
 	
+	/**
+	 * Create a new RobotRepeater with a controlling process and a simulated robot.
+	 * @param master The controlling process.
+	 * @param robot The simulated robot.
+	 */
 	public RobotRepeater(Process master, SimulatedRobot robot)
 	{
 		this(master);
@@ -43,6 +48,12 @@ public class RobotRepeater
 		simulatedRobot = robot;
 	}
 	
+	/**
+	 * Create a new RobotRepeater with a controlling process and a serial port to control a real robot.
+	 * @param master The controlling proces.
+	 * @param port The serial port that connects to the real robot.
+	 * @throws IOException
+	 */
 	public RobotRepeater(Process master, SerialPort port) throws IOException
 	{
 		this(master);
