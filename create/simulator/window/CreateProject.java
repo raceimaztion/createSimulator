@@ -5,6 +5,8 @@ import include.FileNabber;
 import java.io.*;
 import java.util.*;
 
+import javax.comm.CommPortIdentifier;
+
 import create.simulator.utils.*;
 
 import org.fife.ui.rsyntaxtextarea.*;
@@ -51,35 +53,23 @@ public class CreateProject
 	 * Compiles the current code for execution on this computer.
 	 * @return If there's a problem, returns a BuildProblem object.
 	 */
-	public BuildProblem buildSimulatorProject()
+	public void buildSimulatorProject() throws BuildProblem
 	{
-		BuildProblem problem = null;
-		
 		// Compile for local execution:
-		problem = compileLocalProject();
-		if (problem != null)
-			return problem;
-		
-		return null;
+		compileLocalProject();
 	} // end buildSimulatorProject()
 	
-	public BuildProblem buildSerialProject()
+	public void buildSerialProject() throws BuildProblem
 	{
-		BuildProblem problem = null;
-		
 		// Compile for local execution:
-		problem = compileLocalProject();
-		if (problem != null)
-			return problem;
-		
-		return null;
+		compileLocalProject();
 	} // end buildSerialProject()
 	
 	/**
 	 * Compiles this CreateProject for local execution.
 	 * @return If there's a problem, returns a BuildProblem object.
 	 */
-	private BuildProblem compileLocalProject()
+	private void compileLocalProject() throws BuildProblem
 	{
 		// If we're running Linux, try compiling with GCC:
 		if (MainLauncher.getRuntimePlatform() == Platform.LINUX)
@@ -127,20 +117,15 @@ public class CreateProject
 					result = compiler.waitFor();
 				} catch (InterruptedException er) { }
 				
-				if (result == 0)
-				{
-					// We succeeded
-					return null;
-				}
-				else
+				if (result != 0)
 				{
 					// Something failed
-					return new BuildProblem(this, new BufferedReader(new InputStreamReader(stdIn)), new BufferedReader(new InputStreamReader(errIn)), result);
+					throw new BuildProblem(this, new BufferedReader(new InputStreamReader(stdIn)), new BufferedReader(new InputStreamReader(errIn)), result);
 				}
 			}
 			catch (IOException er)
 			{
-				return new BuildProblem(this, "File I/O error.", er.getMessage(), -2);
+				throw new BuildProblem(this, "File I/O error.", er.getMessage(), -2);
 			}
 			finally
 			{
@@ -154,7 +139,7 @@ public class CreateProject
 		else
 		{
 			// Fail, we don't support other OSes just yet
-			return new BuildProblem(this, "Operating System not supported.", "Operating System not supported.", -2);
+			throw new BuildProblem(this, "Operating System not supported.", "Operating System not supported.", -2);
 		}
 	} // end compileLocalProblem()
 	
@@ -162,18 +147,12 @@ public class CreateProject
 	 * Compiles the current code for execution on the Command Module.
 	 * @return If there's a problem, returns a BuildProblem object.
 	 */
-	public BuildProblem buildEmbeddedProject()
+	public void buildEmbeddedProject() throws BuildProblem
 	{
-		BuildProblem problem;
-		
-		problem = compileEmbeddedProject();
-		if (problem != null)
-			return problem;
-		
-		return null;
+		compileEmbeddedProject();
 	} // end buildEmbeddedProject()
 	
-	private BuildProblem compileEmbeddedProject()
+	private void compileEmbeddedProject() throws BuildProblem
 	{
 		// If we're running Linux, try compiling with GCC:
 		if (MainLauncher.getRuntimePlatform() == Platform.LINUX)
@@ -344,22 +323,17 @@ public class CreateProject
 				BuildProblem problem;
 				problem = runProgram("make", embeddedBinFolder);
 				if (problem != null)
-					return problem;
-				
-				// If we get here, we're done!
-				return null;
+					throw problem;
 			}
 			catch (IOException er)
 			{
 				
 			}
-			
-			return null;
 		}
 		else
 		{
 			// Fail, we don't support other OSes just yet
-			return new BuildProblem(this, "Operating System not supported.", "Operating System not supported.", -2);
+			throw new BuildProblem(this, "Operating System not supported.", "Operating System not supported.", -2);
 		}
 	} // end compileEmbeddedProject()
 	
@@ -385,7 +359,7 @@ public class CreateProject
 		}
 	} // end runProgram(command, folder)
 	
-	private BuildProblem runProgramDirected(String command, File folder, File output) throws IOException
+	protected BuildProblem runProgramDirected(String command, File folder, File output) throws IOException
 	{
 		Process compiler = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, folder);
 		
@@ -418,6 +392,30 @@ public class CreateProject
 			return new BuildProblem(this, new BufferedReader(new InputStreamReader(stdIn)), new BufferedReader(new InputStreamReader(errIn)), result);
 		}
 	} // end runProgram(command, folder, output)
+	
+	public void downloadToRobot(CommPortIdentifier id) throws BuildProblem
+	{
+		String portName = id.getName();
+		
+		// Copy the Makefile over again, setting the port id this time:
+		try
+		{
+			PrintStream makefile = new PrintStream(new FileOutputStream(new File(embeddedBinFolder, FileNabber.FILE_MAKEFILE)));
+			makefile.printf("AVRDUDE_PORT = %s\n", portName);
+			CreateUtils.copyFile(FileNabber.FILE_MAKEFILE, makefile);
+			makefile.flush();
+			makefile.close();
+			
+			BuildProblem problem = null;
+			problem = runProgram("make program", embeddedBinFolder);
+			if (problem != null)
+				throw problem;
+		}
+		catch (IOException er)
+		{
+			
+		}
+	} // end downloadToRobot(CommPortIdentifier)
 	
 	/**
 	 * Returns a properly-loaded CreateProject, if it exists.

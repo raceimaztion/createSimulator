@@ -4,8 +4,10 @@ import create.simulator.window.*;
 
 import java.io.*;
 
-public class BuildProblem
+public class BuildProblem extends Throwable
 {
+	private static final long serialVersionUID = 2904798745L;
+	
 	protected CreateProject project;
 	protected String errorData, commentData;
 	protected int commandResult;

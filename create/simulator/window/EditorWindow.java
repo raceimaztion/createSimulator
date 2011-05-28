@@ -396,40 +396,49 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		else if (command.equals(COMMAND_RUN_EMBEDDED))
 		{
 			// Run -> Run on Command Module...
-			BuildProblem problem = project.buildEmbeddedProject();
-			if (problem == null)
+			try
 			{
+				// Compile the project
+				project.buildEmbeddedProject();
+				
+				// Choose a serial port
+				
+				// Tell the project to download to the robot
+				
 				JOptionPane.showMessageDialog(window, "Compile completed successfully.", "Create Simulator", JOptionPane.INFORMATION_MESSAGE);
 			}
-			else
+			catch (BuildProblem er)
 			{
-				buildProblemDialog.showMessage(problem);
+				buildProblemDialog.showMessage(er);
 			}
 		}
 		else if (command.equals(COMMAND_RUN_SERIAL))
 		{
 			// Run -> Run serial control...
-			BuildProblem problem = project.buildSerialProject();
-			if (problem == null)
+			try
 			{
+				project.buildSerialProject();
+				
 				JOptionPane.showMessageDialog(window, "Compile completed successfully.", "Create Simulator", JOptionPane.INFORMATION_MESSAGE);
 			}
-			else
+			catch (BuildProblem er)
 			{
-				buildProblemDialog.showMessage(problem);
+				buildProblemDialog.showMessage(er);
 			}
 		}
 		else if (command.equals(COMMAND_RUN_SIMULATOR))
 		{
 			// Run -> Run simulator...
-			BuildProblem problem = project.buildSimulatorProject();
-			if (problem == null)
+			try
 			{
+				project.buildSimulatorProject();
+				
+				// If we got here, we succeeded
 				JOptionPane.showMessageDialog(window, "Compile completed successfully.", "Create Simulator", JOptionPane.INFORMATION_MESSAGE);
 			}
-			else
+			catch (BuildProblem er)
 			{
-				buildProblemDialog.showMessage(problem);
+				buildProblemDialog.showMessage(er);
 			}
 		}
 	} // end actionPerformed()
