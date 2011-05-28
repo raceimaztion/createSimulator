@@ -1,7 +1,7 @@
 package create.simulator;
 
 import java.io.*;
-import javax.comm.*;
+import gnu.io.*;
 
 /**
  * An interface to a locally-executing controller.

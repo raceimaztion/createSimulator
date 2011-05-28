@@ -5,7 +5,7 @@ import include.FileNabber;
 import java.io.*;
 import java.util.*;
 
-import javax.comm.CommPortIdentifier;
+import gnu.io.*;
 
 import create.simulator.utils.*;
 
@@ -312,10 +312,11 @@ public class CreateProject
 				// Copy the Makefile:
 				PrintStream makefile = new PrintStream(new FileOutputStream(new File(embeddedBinFolder, "Makefile")));
 				makefile.printf("TARGET = %s\n", projectName);
-				BufferedReader makefileIn = new BufferedReader(new InputStreamReader(FileNabber.getFile(FileNabber.FILE_MAKEFILE)));
-				String line;
-				while ((line = makefileIn.readLine()) != null)
-					makefile.println(line.replace("$(TARGET)", projectName));
+				CreateUtils.copyFile(FileNabber.FILE_MAKEFILE, makefile);
+//				BufferedReader makefileIn = new BufferedReader(new InputStreamReader(FileNabber.getFile(FileNabber.FILE_MAKEFILE)));
+//				String line;
+//				while ((line = makefileIn.readLine()) != null)
+//					makefile.println(line.replace("$(TARGET)", projectName));
 				makefile.flush();
 				makefile.close();
 				

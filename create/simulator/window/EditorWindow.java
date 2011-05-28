@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+
+import gnu.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -95,6 +97,7 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 	protected Container mainContainer;
 	
 	protected BuildProblemDialog buildProblemDialog;
+	protected SerialPortChooserDialog portChooserDialog;
 	
 	/**
 	 * Creates a new EditorWindow with no CreateProject.
@@ -224,6 +227,7 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 		window.setLocationRelativeTo(null);
 		
 		buildProblemDialog = new BuildProblemDialog(window);
+		portChooserDialog = new SerialPortChooserDialog(window);
 	} // end setup()
 	
 	/**
@@ -402,6 +406,11 @@ public class EditorWindow implements ActionListener, WindowListener, TabSelectio
 				project.buildEmbeddedProject();
 				
 				// Choose a serial port
+				CommPortIdentifier portId = portChooserDialog.choosePort("<html>Choose a serial port to download the code to the Command Module with:</html>");
+				if (portId == null)
+					return;
+				else
+					project.downloadToRobot(portId);
 				
 				// Tell the project to download to the robot
 				
