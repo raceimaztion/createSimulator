@@ -76,6 +76,17 @@ public class CreateUtils
 		in.close();
 	}
 	
+	public static void copyFile(File source, PrintStream dest) throws IOException
+	{
+		BufferedReader in = new BufferedReader(new FileReader(source));
+		
+		String line;
+		while ((line = in.readLine()) != null)
+			dest.println(line);
+		
+		in.close();
+	}
+	
 	/**
 	 * Copies a file from the given file name to the given File.
 	 * @param source The name of the source file to read from.

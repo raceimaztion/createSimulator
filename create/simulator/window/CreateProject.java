@@ -303,18 +303,18 @@ public class CreateProject
 				// Copy the source library into the project folder
 				String[] modules = getModuleNames();
 				
-				fileMain = new File(embeddedBinFolder, projectName+".cc");
+				fileMain = new File(embeddedBinFolder, projectName+".cpp");
 				fileHeaderCm = new File(embeddedBinFolder, FileNabber.FILE_HEADER_CM);
 				fileHeaderOi = new File(embeddedBinFolder, FileNabber.FILE_HEADER_OI);
 				
 				// Copy the main file,
 				PrintStream main = new PrintStream(new FileOutputStream(fileMain));
 				main.print("#include \"cm.h\"\n");
+				// Dump all the source files into the main module
 				for (String module : modules)
 				{
-					// This prevents infinite loops:
-					if (!module.equals(FileNabber.FILE_MAIN))
-						main.printf("#include \"%s\"\n", module);
+					main.printf("// Source file %s:\n", module);
+					CreateUtils.copyFile(new File(sourceFolder, module), main);
 				}
 				CreateUtils.copyFile(FileNabber.FILE_MAIN, main);
 				main.flush();
@@ -325,10 +325,10 @@ public class CreateProject
 				CreateUtils.copyFile(FileNabber.FILE_HEADER_OI, fileHeaderOi);
 				
 				// Copy all the project source files:
-				for (String module : modules)
-				{
-					CreateUtils.copyFile(new File(sourceFolder, module), new File(embeddedBinFolder, module));
-				}
+//				for (String module : modules)
+//				{
+//					CreateUtils.copyFile(new File(sourceFolder, module), new File(embeddedBinFolder, module));
+//				}
 				
 				// Copy the Makefile:
 				PrintStream makefile = new PrintStream(new FileOutputStream(new File(embeddedBinFolder, "Makefile")));

@@ -60,7 +60,7 @@ FORMAT = ihex
 #TARGET = wall-follow-test
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).cc
+SRC = $(TARGET).cpp
 
 
 # List Assembler source files here.
@@ -98,7 +98,8 @@ EXTRAINCDIRS =
 #     gnu89 = c89 plus GCC extensions
 #     c99   = ISO C99 standard (not yet fully implemented)
 #     gnu99 = c99 plus GCC extensions
-CSTANDARD = -std=gnu99
+#CSTANDARD = -std=gnu99
+CSTANDARD = 
 
 
 # Place -D or -U options here
@@ -121,8 +122,8 @@ CFLAGS = -g$(DEBUG)
 CFLAGS += $(CDEFS) $(CINCS)
 CFLAGS += -O$(OPT)
 CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
-CFLAGS += -Wall -Wstrict-prototypes
-CFLAGS += -Wa,-adhlns=$(<:.c=.lst)
+CFLAGS += -Wall
+CFLAGS += -Wa,-adhlns=$(<:.cpp=.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
 
@@ -454,14 +455,16 @@ extcoff: $(TARGET).elf
 
 
 # Compile: create object files from C source files.
-%.o : %.cc
+%.o : %.cpp
 	@echo
 	@echo $(MSG_COMPILING) $<
 	$(CPP) -c $(ALL_CFLAGS) $< -o $@ 
 
 
 # Compile: create assembler files from C source files.
-%.s : %.cc
+%.s : %.cpp
+	@echo
+	@echo Tweaking $< with the assembler!
 	$(CPP) -S $(ALL_CFLAGS) $< -o $@
 
 
@@ -472,7 +475,7 @@ extcoff: $(TARGET).elf
 	$(CPP) -c $(ALL_ASFLAGS) $< -o $@
 
 # Create preprocessed source for use in sending a bug report.
-%.i : %.cc
+%.i : %.cpp
 	$(CC) -E -mmcu=$(MCU) -I. $(CFLAGS) $< -o $@ 
 
 
