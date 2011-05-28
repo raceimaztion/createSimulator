@@ -95,5 +95,21 @@ public class CreateUtils
 		
 		in.close();
 		out.close();
-	}
+	} // end copyFile(String source, File dest)
+	
+	public static void copyFile(File source, File dest) throws IOException
+	{
+		FileInputStream in = new FileInputStream(source);
+		FileOutputStream out = new FileOutputStream(dest);
+		
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = in.read(buffer)) != -1)
+		{
+			out.write(buffer, 0, length);
+		}
+		out.flush();
+		out.close();
+		in.close();
+	} // end copyFile(File source, File dest)
 }

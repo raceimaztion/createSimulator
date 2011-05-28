@@ -23,6 +23,7 @@ public class BuildProblemDialog implements ActionListener
 		this.parent = parent;
 		
 		dialog = new JDialog(parent, "Create Simulator - Build Issues", true);
+		dialog.setMinimumSize(new Dimension(600, 300));
 		
 		returnValue = new JLabel("Build complete successfully.");
 		

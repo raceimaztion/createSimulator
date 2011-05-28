@@ -178,6 +178,7 @@ public class CreateProject
 		// If we're running Linux, try compiling with GCC:
 		if (MainLauncher.getRuntimePlatform() == Platform.LINUX)
 		{
+			/*
 			File mainSource = null;
 			File header1 = null, header2 = null;
 			
@@ -226,7 +227,7 @@ public class CreateProject
 				 * 
 				 * Creating symbol table:
 				 * avr-nm -n {$project}.elf > {$project}.sym
-				 */
+				 * /
 				
 				// Compile the files
 				String command;
@@ -289,6 +290,71 @@ public class CreateProject
 				if (header2 != null) header2.delete();
 			}
 //			return new BuildProblem(this, "Compiler failed.", "Unhandled error occurred.", -1);
+			 */
+			// TEMP: Launch the Makefile instead of directly running the commands
+			
+			File fileMain, fileHeaderCm, fileHeaderOi;
+			try
+			{
+				// Clean out the embedded binary folder:
+				for (String module : embeddedBinFolder.list())
+					(new File(embeddedBinFolder, module)).delete();
+				
+				// Copy the source library into the project folder
+				String[] modules = getModuleNames();
+				
+				fileMain = new File(embeddedBinFolder, projectName+".cc");
+				fileHeaderCm = new File(embeddedBinFolder, FileNabber.FILE_HEADER_CM);
+				fileHeaderOi = new File(embeddedBinFolder, FileNabber.FILE_HEADER_OI);
+				
+				// Copy the main file,
+				PrintStream main = new PrintStream(new FileOutputStream(fileMain));
+				main.print("#include \"cm.h\"\n");
+				for (String module : modules)
+				{
+					// This prevents infinite loops:
+					if (!module.equals(FileNabber.FILE_MAIN))
+						main.printf("#include \"%s\"\n", module);
+				}
+				CreateUtils.copyFile(FileNabber.FILE_MAIN, main);
+				main.flush();
+				main.close();
+				
+				// Copy the headers.
+				CreateUtils.copyFile(FileNabber.FILE_HEADER_CM, fileHeaderCm);
+				CreateUtils.copyFile(FileNabber.FILE_HEADER_OI, fileHeaderOi);
+				
+				// Copy all the project source files:
+				for (String module : modules)
+				{
+					CreateUtils.copyFile(new File(sourceFolder, module), new File(embeddedBinFolder, module));
+				}
+				
+				// Copy the Makefile:
+				PrintStream makefile = new PrintStream(new FileOutputStream(new File(embeddedBinFolder, "Makefile")));
+				makefile.printf("TARGET = %s\n", projectName);
+				BufferedReader makefileIn = new BufferedReader(new InputStreamReader(FileNabber.getFile(FileNabber.FILE_MAKEFILE)));
+				String line;
+				while ((line = makefileIn.readLine()) != null)
+					makefile.println(line.replace("$(TARGET)", projectName));
+				makefile.flush();
+				makefile.close();
+				
+				// Run the makefile:
+				BuildProblem problem;
+				problem = runProgram("make", embeddedBinFolder);
+				if (problem != null)
+					return problem;
+				
+				// If we get here, we're done!
+				return null;
+			}
+			catch (IOException er)
+			{
+				
+			}
+			
+			return null;
 		}
 		else
 		{

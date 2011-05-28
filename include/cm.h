@@ -20,10 +20,11 @@
 // If we're compiling for local execution, include some standard C libraries
 #ifdef MODE_LOCAL
 #include <stdio.h>
-
 typedef unsigned short uint16_t;
 typedef signed short int16_t;
 #endif
+
+using namespace std;
 
 typedef unsigned char uint8_t;
 typedef signed char int8_t;

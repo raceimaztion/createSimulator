@@ -10,6 +10,7 @@ public class FileNabber
 	public static final String FILE_MAIN = "main.cpp";
 	public static final String FILE_HEADER_OI = "oi.h";
 	public static final String FILE_HEADER_CM = "cm.h";
+	public static final String FILE_MAKEFILE = "Makefile";
 	
 	public static InputStream getFile(String name)
 	{
