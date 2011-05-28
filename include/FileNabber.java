@@ -6,8 +6,8 @@ public class FileNabber
 {
 	private static FileNabber loader = new FileNabber();
 	
-	public static final String FILE_TEMPLATE = "template.cc";
-	public static final String FILE_MAIN = "main.cc";
+	public static final String FILE_TEMPLATE = "template.cpp";
+	public static final String FILE_MAIN = "main.cpp";
 	public static final String FILE_HEADER_OI = "oi.h";
 	public static final String FILE_HEADER_CM = "cm.h";
 	

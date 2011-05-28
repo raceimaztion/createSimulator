@@ -104,7 +104,9 @@ public class CreateProject
 				main.println("#include \"cm.h\"");
 				for (String module : modules)
 				{
-					main.printf("#include \"%s\"\n", module);
+					// This prevents infinite loops:
+					if (!module.equals(FileNabber.FILE_MAIN))
+						main.printf("#include \"%s\"\n", module);
 				}
 				CreateUtils.copyFile(FileNabber.FILE_MAIN, main);
 				main.flush();
@@ -194,7 +196,9 @@ public class CreateProject
 				main.print("#include \"cm.h\"\n");
 				for (String module : modules)
 				{
-					main.printf("#include \"%s\"\n", module);
+					// This prevents infinite loops:
+					if (!module.equals(FileNabber.FILE_MAIN))
+						main.printf("#include \"%s\"\n", module);
 				}
 				CreateUtils.copyFile(FileNabber.FILE_MAIN, main);
 				main.flush();
@@ -250,9 +254,23 @@ public class CreateProject
 					return problem;
 				
 				// Create a load file for EEPROMs:
-				command = String.format("avr-objcopy -O ihex -R .eeprom %s.elf %s.hex", projectName, projectName);
+				command = String.format("avr-objcopy -j .eeprom --set-section-flags=.eeprom=alloc,load --change-section-lma .eeprom=0 -O ihex %s.elf %s.eep", projectName, projectName);
 				System.out.println(command);
 				problem = runProgram(command, embeddedBinFolder);
+				if (problem != null)
+					return problem;
+				
+				// Create an extended listing:
+				command = String.format("avr-objdump -h -S %s.elf", projectName);
+				System.out.println(command);
+				problem = runProgramDirected(command, embeddedBinFolder, new File(embeddedBinFolder, projectName+".lss"));
+				if (problem != null)
+					return problem;
+				
+				// Create the symbol table:
+				command = String.format("avr-nm -n %s.elf", projectName);
+				System.out.println(command);
+				problem = runProgramDirected(command, embeddedBinFolder, new File(embeddedBinFolder, projectName+".sym"));
 				if (problem != null)
 					return problem;
 				
@@ -270,7 +288,7 @@ public class CreateProject
 				if (header1 != null) header1.delete();
 				if (header2 != null) header2.delete();
 			}
-//			return new BuildProblem(this, "Compiler failed.", "Unhandled error ocurred.", -1);
+//			return new BuildProblem(this, "Compiler failed.", "Unhandled error occurred.", -1);
 		}
 		else
 		{
@@ -299,7 +317,41 @@ public class CreateProject
 			// Something failed
 			return new BuildProblem(this, new BufferedReader(new InputStreamReader(stdIn)), new BufferedReader(new InputStreamReader(errIn)), result);
 		}
-	}
+	} // end runProgram(command, folder)
+	
+	private BuildProblem runProgramDirected(String command, File folder, File output) throws IOException
+	{
+		Process compiler = Runtime.getRuntime().exec(new String[]{"/bin/sh", "-c", command}, null, folder);
+		
+		InputStream stdIn = compiler.getInputStream();
+		InputStream errIn = compiler.getErrorStream();
+		Integer result = null;
+		try {
+			result = compiler.waitFor();
+		} catch (InterruptedException er) {}
+		
+		// Pipe the stdIn into the output given
+		FileOutputStream out = new FileOutputStream(output);
+		byte[] buffer = new byte[1024];
+		int bytesRead;
+		while ((bytesRead = stdIn.read(buffer)) != -1)
+		{
+			out.write(buffer, 0, bytesRead);
+		}
+		out.flush();
+		out.close();
+		
+		if (result == 0)
+		{
+			// We succeeded
+			return null;
+		}
+		else
+		{
+			// Something failed
+			return new BuildProblem(this, new BufferedReader(new InputStreamReader(stdIn)), new BufferedReader(new InputStreamReader(errIn)), result);
+		}
+	} // end runProgram(command, folder, output)
 	
 	/**
 	 * Returns a properly-loaded CreateProject, if it exists.
@@ -342,7 +394,7 @@ public class CreateProject
 			// Add a bare minimum source file to the source folder
 			try
 			{
-				CreateUtils.copyFile(FileNabber.FILE_TEMPLATE, new File(srcFolder, "Main.cc"));
+				CreateUtils.copyFile(FileNabber.FILE_TEMPLATE, new File(srcFolder, "Main.cpp"));
 			}
 			catch (IOException er)
 			{
